@@ -13,11 +13,12 @@ float b[4] __attribute__((aligned(16))) = {0,1,0,0};
 float c[4] __attribute__((aligned(16)));
 
 
-#define PARTICLES_MAXCOUNT 128 //must be power of 2 in orderfor array data align to work later on
+#define PARTICLES_MAXCOUNT 4 //must be power of 2 in orderfor array data align to work later on
 #define PARTICLES_DEFAULTMASS 1.0
 #define GRAVITATIONALCONSTANT 1.0
 #define DELTA_TIME 1.0
-#define GRID_SIZE 1000
+#define GRID_SIZE 10 // grid is a +- GRID_SIZE/2 cube
+#define EPS 1.0 // EPS^2 constant to avoid singularities
 
 typedef struct 
 {
@@ -43,12 +44,14 @@ int main(int argc, char **argv)
 	//seed random generator
 	srand( time(NULL) );
 
-	printf("Printing out particles and their randomly assigned positions: \n\n");
+	printf("\n\n\n~~~~~~~~Printing out particles and their randomly assigned positions: \n\n");
 
 	int pC = 0;
 	for(pC = 0; pC < PARTICLES_MAXCOUNT; ++pC)
 	{
 		int grideSize = GRID_SIZE;
+
+	//	printf("\n grideSize/2: %d", grideSize/2);
 
 		float xPos = (float)( rand() % grideSize  - grideSize/2);
 		float yPos = (float)( rand() % grideSize  - grideSize/2);
@@ -89,6 +92,7 @@ int main(int argc, char **argv)
 	__vector float tempMassSplat = {0,0,0,0};
 	__vector float tempGConstant = {GRAVITATIONALCONSTANT,GRAVITATIONALCONSTANT,GRAVITATIONALCONSTANT,GRAVITATIONALCONSTANT };
 	__vector float tempDELATTIME = {DELTA_TIME, DELTA_TIME, DELTA_TIME, DELTA_TIME};
+	__vector float tempEPS= {EPS, EPS, EPS, EPS};
 
 	__vector float zeroVector = {0,0,0,0};
 
@@ -119,12 +123,28 @@ int main(int argc, char **argv)
 			pDj = particle_Array[j];
 
 			tempDistance = vec_sub(pDj.position,pDi.position); //actual distance vector between objects i and j
+			
+			/* //Print distances between particles
+			printf("Particle %d:   ", i );
+			printf("x= %f, y=%f, z=%f", tempDistance[0], tempDistance[1], tempDistance[2]);
+			printf("\n");
+			*/
+
 			//use the distance vector  right now for numerator, before we overwrite is later in the code
 			tempMassSplat = vec_splats((float)pDj.velocity[3]); //mass is stored in the last element (3) of velocity vector
 			tempNumerator = vec_madd(tempMassSplat, tempGConstant, zeroVector);
 			tempNumerator = vec_madd(tempNumerator, tempDistance, zeroVector); // this is completed numerator vector
 
+
+			/*
+			//Print numerator
+			printf("Numerator %d:   ", i );
+			printf("x= %f, y=%f, z=%f", tempNumerator[0], tempNumerator[1], tempNumerator[2]);
+			printf("\n");
+			*/
+
 			tempDistance = vec_madd(tempDistance,tempDistance,zeroVector); //square the vector
+
 
 			 //Assembly for vector rotate
 			//__asm__("addi    4,4,1;");
@@ -136,15 +156,23 @@ int main(int argc, char **argv)
 			//add both
 			tempDistanceRL1 = vec_add(tempDistanceRL1, tempDistanceRL2);
 			//add to original to get total ---> x+y+z
-			tempDistance = vec_add(tempDistance, tempDistanceRL1);
-			//tempDistance is now total distance squared
+			tempDistance = vec_add(tempDistance, tempDistanceRL1); //tempDistance is now total distance squared
 
+			
 			//now need to cube tempDistance
 			tempDistance = vec_madd(tempDistance, tempDistance, zeroVector); //squared
-			tempDistance = vec_madd(tempDistance, tempDistance, zeroVector); //cubbed
+			tempDistance = vec_madd(tempDistance, tempDistance, tempEPS); //cubbed, added EPS to avoid singularity
 
+			
 			//get inverse square root
 			tempDistance = vec_rsqrte(tempDistance); // this is final denominator (already inverted), only need to multiply
+
+			/*
+			//Print denominator
+			printf("Denominator %d:   ", i );
+			printf("x= %f, y=%f, z=%f", tempDistance[0], tempDistance[1], tempDistance[2]);
+			printf("\n");
+			*/
 
 			//total acceleration applied to particle i, by particle j
 			tempAcceleration = vec_madd(tempDistance, tempNumerator, zeroVector);
@@ -152,8 +180,26 @@ int main(int argc, char **argv)
 			//increment velocity value of particle with a*dt
 			pDi.velocity = vec_madd(tempAcceleration, tempAcceleration, pDi.velocity);
 
+
+			/*
+			//Print velocity
+			printf("Velocity %d:   ", i );
+			printf("x= %f, y=%f, z=%f", pDi.velocity[0], pDi.velocity[1], pDi.velocity[2]);
+			printf("\n");
+			*/
+
+
+			/*
+
+			printf("Particle %d:   ", i );
+			printf("x= %f, y=%f, z=%f", pDi.velocity[0], pDi.velocity[1], pDi.velocity[2]);
+			printf("\n");
+
+			*/
+			
 			//end of this loop
 		}
+		printf("\n");
 	}
 
 	//now that all the accelerations for all particles are calculated,
@@ -164,12 +210,19 @@ int main(int argc, char **argv)
 		// vec_madd is awesome, it all gets done in one line! emulated the += operator, kinda, but more flexible
 		particle_Array[i].position = vec_madd(particle_Array[i].velocity, tempDELATTIME, particle_Array[i].position);
 
+		/*
+		printf("Particle %d:   ", i );
+		printf("x= %f, y=%f, z=%f", particle_Array[i].position[i], particle_Array[i].position[1], particle_Array[i].position[2]);
+		printf("\n");
+
+		*/
+
 	}
 
 
 
 /*
-  __vector  float *va = (__vector  float *) a;
+  __vector  float *va = (__vector  float *) a;	
   __vector  float *vb = (__vector  float *) b;
   __vector  float *vc = (__vector  float *) c;
 
