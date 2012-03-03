@@ -70,10 +70,6 @@ int main(int argc, char **argv)
 
 
 
-
-
-
-
 ///main loop
 	
 
@@ -164,8 +160,9 @@ int main(int argc, char **argv)
 	//apply them and update velocity 
 	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
 	{
-
-
+		//incrementing position with v*dt
+		// vec_madd is awesome, it all gets done in one line! emulated the += operator, kinda, but more flexible
+		particle_Array[i].position = vec_madd(particle_Array[i].velocity, tempDELATTIME, particle_Array[i].position);
 
 	}
 
