@@ -13,7 +13,7 @@ float b[4] __attribute__((aligned(16))) = {0,1,0,0};
 float c[4] __attribute__((aligned(16)));
 
 
-#define PARTICLES_MAXCOUNT 4 //must be power of 2 in orderfor array data align to work later on
+#define PARTICLES_MAXCOUNT 16 //must be power of 2 in orderfor array data align to work later on
 #define PARTICLES_DEFAULTMASS 1.0
 #define GRAVITATIONALCONSTANT 1.0
 #define DELTA_TIME 1.0
@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 	printf("\n^^^^^^^   Now starting main loop\n\n\n");
 
 
-	for(it_counter = 0; i < ITERATION_COUNT; ++it_counter)
+	for(it_counter = 0; it_counter < ITERATION_COUNT; ++it_counter)
 	{
 
 		printf("\nIteration: %d\n",it_counter );
