@@ -16,8 +16,8 @@ float c[4] __attribute__((aligned(16)));
 #define PARTICLES_MAXCOUNT 128 //must be power of 2 in orderfor array data align to work later on
 #define PARTICLES_DEFAULTMASS 1.0
 #define GRAVITATIONALCONSTANT 1.0
-#define DELTA_TIME 1.0;
-#define GRID_SIZE 1000;
+#define DELTA_TIME 1.0
+#define GRID_SIZE 1000
 
 typedef struct 
 {
@@ -55,14 +55,16 @@ int main(int argc, char **argv)
 		float zPos = (float)( rand() % grideSize  - grideSize/2);
 
 		particle_Array[pC].position[0] = xPos;
-		particle_Array[pC].position[0] = yPos;
-		particle_Array[pC].position[0] = zPos;
-
+		particle_Array[pC].position[1] = yPos;
+		particle_Array[pC].position[2] = zPos;
 
 		particle_Array[pC].velocity[3] = PARTICLES_DEFAULTMASS;
 
+		//particle_Array[pC].position = vec_splat(particle_Array[pC].position, 1);
+		//particle_Array[pC].position = vec_splats((float)GRAVITATIONALCONSTANT); --> use splats, seems faster
+
 		printf("Particle %d:   ", pC );
-		printf("x= %f, y=%f, z=%f", xPos, yPos, zPos);
+		printf("x= %f, y=%f, z=%f", particle_Array[pC].position[0], particle_Array[pC].position[1], particle_Array[pC].position[2]);
 		printf("\n");
 	}
 
@@ -90,7 +92,7 @@ int main(int argc, char **argv)
 	__vector float tempNumerator = {0,0,0,0};
 	__vector float tempMassSplat = {0,0,0,0};
 	__vector float tempGConstant = {GRAVITATIONALCONSTANT,GRAVITATIONALCONSTANT,GRAVITATIONALCONSTANT,GRAVITATIONALCONSTANT };
-	__vector float tempDELATTIME = {DELTA_TIME,DELTA_TIME,DELTA_TIME,DELTA_TIME};
+	__vector float tempDELATTIME = {DELTA_TIME, DELTA_TIME, DELTA_TIME, DELTA_TIME};
 
 	__vector float zeroVector = {0,0,0,0};
 
@@ -122,9 +124,9 @@ int main(int argc, char **argv)
 
 			tempDistance = vec_sub(pDj.position,pDi.position); //actual distance vector between objects i and j
 			//use the distance vector  right now for numerator, before we overwrite is later in the code
-			tempMassSplat = vec_splat(pDj.velocity, 3); //mass is stored in the last element (3) of velocity vector
+			tempMassSplat = vec_splats((float)pDj.velocity[3]); //mass is stored in the last element (3) of velocity vector
 			tempNumerator = vec_madd(tempMassSplat, tempGConstant, zeroVector);
-			tempNumerator = vec_madd(tempNumerator, tempDistance); // this is completed numerator vector
+			tempNumerator = vec_madd(tempNumerator, tempDistance, zeroVector); // this is completed numerator vector
 
 			tempDistance = vec_madd(tempDistance,tempDistance,zeroVector); //square the vector
 
@@ -162,9 +164,9 @@ int main(int argc, char **argv)
 	//apply them and update velocity 
 	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
 	{
-		
 
-		
+
+
 	}
 
 
