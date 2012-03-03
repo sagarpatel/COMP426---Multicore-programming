@@ -29,8 +29,6 @@ particle_Data;
 particle_Data particle_Array[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(particle_Data)*PARTICLES_MAXCOUNT)));
 
 
-__vector unsigned char yzxwMask = { 4,5,6,7, 8,9,10,11, 0,1,2,3,  12,13,14,15};
-__vector unsigned char zxywMask = { 8,9,10,11, 0,1,2,3, 4,5,6,7,  12,13,14,15};
 
 
 
@@ -60,8 +58,6 @@ int main(int argc, char **argv)
 		particle_Array[pC].position[0] = yPos;
 		particle_Array[pC].position[0] = zPos;
 
-
-		particle_Array[pC].position = vec_splats(xPos);
 
 		particle_Array[pC].velocity[3] = PARTICLES_DEFAULTMASS;
 
@@ -94,15 +90,21 @@ int main(int argc, char **argv)
 	__vector float tempNumerator = {0,0,0,0};
 	__vector float tempMassSplat = {0,0,0,0};
 	__vector float tempGConstant = {GRAVITATIONALCONSTANT,GRAVITATIONALCONSTANT,GRAVITATIONALCONSTANT,GRAVITATIONALCONSTANT };
+	__vector float tempDELATTIME = {DELTA_TIME,DELTA_TIME,DELTA_TIME,DELTA_TIME};
 
 	__vector float zeroVector = {0,0,0,0};
 
+	__vector unsigned char yzxwMask = { 4,5,6,7, 8,9,10,11, 0,1,2,3,  12,13,14,15};
+	__vector unsigned char zxywMask = { 8,9,10,11, 0,1,2,3, 4,5,6,7,  12,13,14,15};
 
 
 	//stupid C99, need to declare indicies before for loops
 	int i = 0;
 	int j = 0;
 
+	// this first loop is to calculate the forces/accelerations
+	// NOTE ---> NO FORCES ARE APPLIED IN THIS LOOP, NO POSITIONS WILL BE CHANGED.
+	// The calculated accelerations will be used to increment the particles velocity vector, NOT POSITION
 	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
 	{
 		//cache the particle data struct to the temp declared outside the loops
@@ -120,13 +122,14 @@ int main(int argc, char **argv)
 
 			tempDistance = vec_sub(pDj.position,pDi.position); //actual distance vector between objects i and j
 			//use the distance vector  right now for numerator, before we overwrite is later in the code
-			tempMassSplat = vec_splats(pDj.velocity[3]);
+			tempMassSplat = vec_splat(pDj.velocity, 3); //mass is stored in the last element (3) of velocity vector
+			tempNumerator = vec_madd(tempMassSplat, tempGConstant, zeroVector);
+			tempNumerator = vec_madd(tempNumerator, tempDistance); // this is completed numerator vector
 
 			tempDistance = vec_madd(tempDistance,tempDistance,zeroVector); //square the vector
 
 			 //Assembly for vector rotate
 			//__asm__("addi    4,4,1;");
-
 
 			//using perm instead of rotate, bleurg
 			tempDistanceRL1 = vec_perm(tempDistance, zeroVector, yzxwMask); // imitates lxfloat left rotate
@@ -143,14 +146,25 @@ int main(int argc, char **argv)
 			tempDistance = vec_madd(tempDistance, tempDistance, zeroVector); //cubbed
 
 			//get inverse square root
-			tempDistance = vec_rsqrte(tempDistance);
+			tempDistance = vec_rsqrte(tempDistance); // this is final denominator (already inverted), only need to multiply
+
+			//total acceleration applied to particle i, by particle j
+			tempAcceleration = vec_madd(tempDistance, tempNumerator, zeroVector);
 			
+			//increment velocity value of particle with a*dt
+			pDi.velocity = vec_madd(tempAcceleration, tempAcceleration, pDi.velocity);
 
+			//end of this loop
 		}
+	}
 
+	//now that all the accelerations for all particles are calculated,
+	//apply them and update velocity 
+	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+	{
+		
 
-
-
+		
 	}
 
 
