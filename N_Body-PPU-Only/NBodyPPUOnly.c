@@ -30,7 +30,7 @@ particle_Data;
 
 particle_Data particle_Array[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(particle_Data)*PARTICLES_MAXCOUNT)));
 
-
+__vector unsigned short octantCount;
 
 int main(int argc, char **argv)
 {
@@ -96,9 +96,14 @@ int main(int argc, char **argv)
 
 	__vector float zeroVector = {0,0,0,0};
 
+	__vector unsigned int axisBitShiftMask = {0,1,2,0};
+
+
 	__vector unsigned char yzxwMask = { 4,5,6,7, 8,9,10,11, 0,1,2,3,  12,13,14,15};
 	__vector unsigned char zxywMask = { 8,9,10,11, 0,1,2,3, 4,5,6,7,  12,13,14,15};
 
+	__vector unsigned short resetOctantCount = {0,0,0,0,0,0,0};
+	__vector unsigned short increment = {1,1,1,1,1,1,1,1};
 
 	//stupid C99, need to declare indicies before for loops
 	int i = 0;
@@ -111,6 +116,7 @@ int main(int argc, char **argv)
 	for(it_counter = 0; it_counter < ITERATION_COUNT; ++it_counter)
 	{
 
+		octantCount = resetOctantCount;
 	//	printf("\nIteration: %d\n",it_counter );
 
 
@@ -228,12 +234,49 @@ int main(int argc, char **argv)
 			printf("x= %f, y=%f, z=%f", particle_Array[i].position[0], particle_Array[i].position[1], particle_Array[i].position[2]);
 			printf("\n");
 		*/
-		/////////// INSERT QUADRANT CODE HERE  ----> USE tempDistance before its too late!
-	
+
+
+			///// ALL CODE BELOW THIS SHOULD ONLY BE RUN ON PPU \\\\\\\\\\\\\\\\\\
+
+
+		/////////// INSERT QUADRANT CODE HERE , actually octant --> 8 equal sub cubes 
+			
+			// compare with zero vector to get on which side of each axis the particle is
+			// 0 is negative, 1 is positive side of the axis
+			__vector bool int axisDirection = vec_cmpgt(particle_Array[i].position, zeroVector);
+			// need to manually set, can't cast due to size difference error
+			__vector unsigned int shiftedAxis = { (unsigned int)axisDirection[0],
+												  (unsigned int)axisDirection[1],
+												  (unsigned int)axisDirection[2],
+													0};
+
+			// shift 3 axies simultaneously (actually only 2, 1 stays in origina positon
+			//, with intent to OR them later
+			shiftedAxis = vec_sl(shiftedAxis, axisBitShiftMask); // will also use as x vector
+
+			__vector unsigned int axis_Y = vec_splats(shiftedAxis[1]);
+			__vector unsigned int axis_Z = vec_splats(shiftedAxis[2]);
+			// merge shhifted x y z values by OR-ing
+			// this gives the octant id, range from 0-7 (000 to 111 in binary)
+			shiftedAxis = vec_or(shiftedAxis, axis_Y);
+			shiftedAxis = vec_or(shiftedAxis, axis_Z);
+			// insert octant value into last slot of position vector of particle
+			particle_Array[i].position[3] = (float)shiftedAxis[0];
+
+			/////// Update octant vector by incrementing octant that the particle is in
+			// The only possible non SIMD line in the entire program, 
+			//irreleant since quadrant counting should occur on PPu anyways
+			octantCount[shiftedAxis[0]] ++ ;
 
 		}
 
 		//end of main loop
+
+		printf("End of iteration %d --->    ",it_counter );
+		printf("Particle disttribution across the octants: \n");
+		printf("O0: %d    O1: %d    O2: %d    O3: %d    O4: %d    O5: %d    O6: %d    O7: %d\n",
+				octantCount[0], octantCount[1], octantCount[2], octantCount[3], 
+				octantCount[4],	octantCount[5], octantCount[6], octantCount[7]);
 
 	}
 
