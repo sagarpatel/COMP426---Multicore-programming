@@ -16,7 +16,7 @@ float c[4] __attribute__((aligned(16)));
 #define PARTICLES_MAXCOUNT 16 //must be power of 2 in orderfor array data align to work later on
 #define PARTICLES_DEFAULTMASS 1.0
 #define GRAVITATIONALCONSTANT 1.0
-#define DELTA_TIME 1.0
+#define DELTA_TIME 100.0
 #define GRID_SIZE 10 // grid is a +- GRID_SIZE/2 cube
 #define EPS 1.0 // EPS^2 constant to avoid singularities
 #define ITERATION_COUNT 10
@@ -134,18 +134,10 @@ int main(int argc, char **argv)
 				//cache the particle data struct to the temp declared outside the loops
 				pDj = particle_Array[j];
 
+				// Formula being used --> a = (G * m )/(r^2)
+
 				tempDistance = vec_sub(pDj.position,pDi.position); //actual distance vector between objects i and j
 				
-
-
-
-
-
-
-		/////////// INSERT QUADRANT CODE HERE  ----> USE tempDistance before its too late!
-
-
-
 
 
 				/* //Print distances between particles
@@ -157,8 +149,7 @@ int main(int argc, char **argv)
 				//use the distance vector  right now for numerator, before we overwrite is later in the code
 				tempMassSplat = vec_splats((float)pDj.velocity[3]); //mass is stored in the last element (3) of velocity vector
 				tempNumerator = vec_madd(tempMassSplat, tempGConstant, zeroVector);
-				tempNumerator = vec_madd(tempNumerator, tempDistance, zeroVector); // this is completed numerator vector
-
+				
 
 				/*
 				//Print numerator
@@ -166,12 +157,13 @@ int main(int argc, char **argv)
 				printf("x= %f, y=%f, z=%f", tempNumerator[0], tempNumerator[1], tempNumerator[2]);
 				printf("\n");
 				*/
-
-				tempDistance = vec_madd(tempDistance,tempDistance,zeroVector); //square the vector
-
-
+				 
 				 //Assembly for vector rotate
 				//__asm__("addi    4,4,1;");
+
+				// denominator part
+				// sqaure each component, x,y,z beforehand
+				tempDistance = vec_madd(tempDistance, tempDistance, zeroVector);
 
 				//using perm instead of rotate, bleurg
 				tempDistanceRL1 = vec_perm(tempDistance, zeroVector, yzxwMask); // imitates lxfloat left rotate
@@ -181,15 +173,14 @@ int main(int argc, char **argv)
 				tempDistanceRL1 = vec_add(tempDistanceRL1, tempDistanceRL2);
 				//add to original to get total ---> x+y+z
 				tempDistance = vec_add(tempDistance, tempDistanceRL1); //tempDistance is now total distance squared
-
 				
-				//now need to cube tempDistance
-				tempDistance = vec_madd(tempDistance, tempDistance, zeroVector); //squared
-				tempDistance = vec_madd(tempDistance, tempDistance, tempEPS); //cubbed, added EPS to avoid singularity
+				// add EPS to avoid singularity
+				tempDistance =  vec_add(tempDistance, tempEPS); //this is now the denominator value
 
-				
-				//get inverse square root
-				tempDistance = vec_rsqrte(tempDistance); // this is final denominator (already inverted), only need to multiply
+				// invert vector to avoid division later
+				tempDistance = vec_re(tempDistance); // this is final denominator (already inverted), only need to multiply
+				// tempDistance is now eqivalent to 1/r^2 
+
 
 				/*
 				//Print denominator
@@ -202,7 +193,7 @@ int main(int argc, char **argv)
 				tempAcceleration = vec_madd(tempDistance, tempNumerator, zeroVector);
 				
 				//increment velocity value of particle with a*dt
-				pDi.velocity = vec_madd(tempAcceleration, tempAcceleration, pDi.velocity);
+				pDi.velocity = vec_madd(tempAcceleration, tempDELATTIME, pDi.velocity);
 
 
 				/*
@@ -239,7 +230,8 @@ int main(int argc, char **argv)
 			printf("x= %f, y=%f, z=%f", particle_Array[i].position[i], particle_Array[i].position[1], particle_Array[i].position[2]);
 			printf("\n");
 
-			
+		/////////// INSERT QUADRANT CODE HERE  ----> USE tempDistance before its too late!
+	
 
 		}
 
