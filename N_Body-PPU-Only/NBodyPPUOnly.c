@@ -13,7 +13,7 @@ float b[4] __attribute__((aligned(16))) = {0,1,0,0};
 float c[4] __attribute__((aligned(16)));
 
 
-#define PARTICLES_MAXCOUNT 16 //must be power of 2 in orderfor array data align to work later on
+#define PARTICLES_MAXCOUNT 4 //must be power of 2 in orderfor array data align to work later on
 #define PARTICLES_DEFAULTMASS 1.0
 #define GRAVITATIONALCONSTANT 1.0
 #define DELTA_TIME 100.0
@@ -29,8 +29,6 @@ typedef struct
 particle_Data;
 
 particle_Data particle_Array[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(particle_Data)*PARTICLES_MAXCOUNT)));
-
-
 
 
 
@@ -193,8 +191,8 @@ int main(int argc, char **argv)
 				tempAcceleration = vec_madd(tempDistance, tempNumerator, zeroVector);
 				
 				//increment velocity value of particle with a*dt
-				pDi.velocity = vec_madd(tempAcceleration, tempDELATTIME, pDi.velocity);
-
+				// need to explicitly call the array, since pDi is only a temp pass by value, doesn't change the particle
+				particle_Array[i].velocity = vec_madd(tempAcceleration, tempDELATTIME, particle_Array[i].velocity);
 
 				/*
 				//Print velocity
@@ -214,7 +212,7 @@ int main(int argc, char **argv)
 				
 				//end of this loop
 			}
-			printf("\n");
+			//printf("\n");
 		}
 
 		//now that all the accelerations for all particles are calculated,
