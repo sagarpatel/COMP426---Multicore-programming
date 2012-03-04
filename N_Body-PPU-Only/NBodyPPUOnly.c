@@ -13,13 +13,13 @@ float b[4] __attribute__((aligned(16))) = {0,1,0,0};
 float c[4] __attribute__((aligned(16)));
 
 
-#define PARTICLES_MAXCOUNT 4 //must be power of 2 in orderfor array data align to work later on
-#define PARTICLES_DEFAULTMASS 1.0
-#define GRAVITATIONALCONSTANT 1.0
+#define PARTICLES_MAXCOUNT 128 //must be power of 2 in orderfor array data align to work later on
+#define PARTICLES_DEFAULTMASS 10.0 // 1.0 is 1 kg
+#define GRAVITATIONALCONSTANT 0.00000000006673 // real value is 6.673 * 10^-11
 #define DELTA_TIME 100.0
 #define GRID_SIZE 10 // grid is a +- GRID_SIZE/2 cube
 #define EPS 1.0 // EPS^2 constant to avoid singularities
-#define ITERATION_COUNT 10
+#define ITERATION_COUNT 100
 
 typedef struct 
 {
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 	for(it_counter = 0; it_counter < ITERATION_COUNT; ++it_counter)
 	{
 
-		printf("\nIteration: %d\n",it_counter );
+	//	printf("\nIteration: %d\n",it_counter );
 
 
 		// this first loop is to calculate the forces/accelerations
@@ -223,11 +223,11 @@ int main(int argc, char **argv)
 			// vec_madd is awesome, it all gets done in one line! emulated the += operator, kinda, but more flexible
 			particle_Array[i].position = vec_madd(particle_Array[i].velocity, tempDELATTIME, particle_Array[i].position);
 
-			
+		/*			
 			printf("Particle %d positions:   ", i );
-			printf("x= %f, y=%f, z=%f", particle_Array[i].position[i], particle_Array[i].position[1], particle_Array[i].position[2]);
+			printf("x= %f, y=%f, z=%f", particle_Array[i].position[0], particle_Array[i].position[1], particle_Array[i].position[2]);
 			printf("\n");
-
+		*/
 		/////////// INSERT QUADRANT CODE HERE  ----> USE tempDistance before its too late!
 	
 
@@ -238,7 +238,13 @@ int main(int argc, char **argv)
 	}
 
 
+	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+	{
 
+	printf("Particle %d positions:   ", i );
+	printf("x= %f, y=%f, z=%f", particle_Array[i].position[0], particle_Array[i].position[1], particle_Array[i].position[2]);
+	printf("\n");
+	}
 
 
 /*
