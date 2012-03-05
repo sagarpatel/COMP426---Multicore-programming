@@ -1,22 +1,16 @@
 #include <stdio.h>
-#include <altivec.h>
 #include <math.h>
 #include <time.h>
 #include <altivec.h>
 #include <ppu_intrinsics.h>
 //#include <vec_types.h>
+#include <sys/time.h>
 
 
-
-float a[4] __attribute__((aligned(16))) = {1,2,3,4};
-float b[4] __attribute__((aligned(16))) = {0,1,0,0};
-float c[4] __attribute__((aligned(16)));
-
-
-#define PARTICLES_MAXCOUNT 128 //must be power of 2 in orderfor array data align to work later on
-#define PARTICLES_DEFAULTMASS 10.0 // 1.0 is 1 kg
+#define PARTICLES_MAXCOUNT 64 //must be power of 2 in orderfor array data align to work later on
+#define PARTICLES_DEFAULTMASS 1000.0 // 1.0 is 1 kg
 #define GRAVITATIONALCONSTANT 0.00000000006673 // real value is 6.673 * 10^-11
-#define DELTA_TIME 100.0
+#define DELTA_TIME 60.0
 #define GRID_SIZE 10 // grid is a +- GRID_SIZE/2 cube
 #define EPS 1.0 // EPS^2 constant to avoid singularities
 #define ITERATION_COUNT 100
@@ -34,6 +28,8 @@ __vector unsigned short octantCount;
 
 int main(int argc, char **argv)
 {
+
+	time_t startTime = time(NULL);
 
 
 // setup, assign particles initla positions and masses
@@ -95,6 +91,7 @@ int main(int argc, char **argv)
 	__vector float tempEPS= {EPS, EPS, EPS, EPS};
 
 	__vector float zeroVector = {0,0,0,0};
+	__vector unsigned int oneVector = {1,1,1,1};
 
 	__vector unsigned int axisBitShiftMask = {0,1,2,0};
 
@@ -151,7 +148,8 @@ int main(int argc, char **argv)
 				*/
 
 				//use the distance vector  right now for numerator, before we overwrite is later in the code
-				tempMassSplat = vec_splats((float)pDj.velocity[3]); //mass is stored in the last element (3) of velocity vector
+				// use mass of subject mass
+				tempMassSplat = vec_splats((float)pDi.velocity[3]); //mass is stored in the last element (3) of velocity vector
 				tempNumerator = vec_madd(tempMassSplat, tempGConstant, zeroVector);
 				
 
@@ -244,11 +242,22 @@ int main(int argc, char **argv)
 			// compare with zero vector to get on which side of each axis the particle is
 			// 0 is negative, 1 is positive side of the axis
 			__vector bool int axisDirection = vec_cmpgt(particle_Array[i].position, zeroVector);
+
+
+
 			// need to manually set, can't cast due to size difference error
 			__vector unsigned int shiftedAxis = { (unsigned int)axisDirection[0],
 												  (unsigned int)axisDirection[1],
 												  (unsigned int)axisDirection[2],
 													0};
+			// need to do this to revert 1s into NON 2s complement form --> vec_cmgt doc LIES
+			shiftedAxis = vec_andc(oneVector, shiftedAxis);
+
+			/*
+			printf("Particle %d axis sign:   ", i );
+			printf("x= %x, y=%x, z=%x", shiftedAxis[0], shiftedAxis[1], shiftedAxis[2]);
+			printf("\n");
+			*/
 
 			// shift 3 axies simultaneously (actually only 2, 1 stays in origina positon
 			//, with intent to OR them later
@@ -263,10 +272,14 @@ int main(int argc, char **argv)
 			// insert octant value into last slot of position vector of particle
 			particle_Array[i].position[3] = (float)shiftedAxis[0];
 
+			//printf("Oct ID: %d \n", shiftedAxis[0]);
+
 			/////// Update octant vector by incrementing octant that the particle is in
 			// The only possible non SIMD line in the entire program, 
-			//irreleant since quadrant counting should occur on PPu anyways
+			//irreleant since quadrant counting should occur on PPU anyways
 			octantCount[shiftedAxis[0]] ++ ;
+			
+			
 
 		}
 
@@ -277,31 +290,24 @@ int main(int argc, char **argv)
 		printf("O0: %d    O1: %d    O2: %d    O3: %d    O4: %d    O5: %d    O6: %d    O7: %d\n",
 				octantCount[0], octantCount[1], octantCount[2], octantCount[3], 
 				octantCount[4],	octantCount[5], octantCount[6], octantCount[7]);
-
+		printf("\n");
 	}
 
 
+	printf("\n");
 	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
 	{
-
-	printf("Particle %d positions:   ", i );
+	printf("Particle %d final position:   ", i );
 	printf("x= %f, y=%f, z=%f", particle_Array[i].position[0], particle_Array[i].position[1], particle_Array[i].position[2]);
 	printf("\n");
 	}
 
 
-/*
-  __vector  float *va = (__vector  float *) a;	
-  __vector  float *vb = (__vector  float *) b;
-  __vector  float *vc = (__vector  float *) c;
+	time_t endTime = time(NULL);
+	int deltaTime = endTime - startTime;
 
-  //*vc = vec_sub(*va,*vb);
-
-
-  *vc = vec_perm(*va,*vb, yzxwMask);
-
-printf("c[0]=%f, c[1]=%f, c[2]=%f, c[3]=%f¥n", c[0], c[1], c[2], c[3]);
-*/
+	printf("Execution time:    %d\n",deltaTime);
+	
 
 
 return 0;
