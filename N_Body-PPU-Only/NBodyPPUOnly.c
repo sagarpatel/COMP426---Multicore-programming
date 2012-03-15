@@ -1,3 +1,34 @@
+/*
+Sagar Patel
+9356037
+COMP426 Asg1
+
+Trivial N-Body Simulation that runs on the PPU of the Cell Processor
+
+Pretty much entirely SIMD based and NOT A SINGLE BRANCH IN THE CODE
+
+
+
+ Copyright (C) 2012  Sagar Patel
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+*/
+
+
+
+
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
@@ -7,13 +38,13 @@
 #include <sys/time.h>
 
 
-#define PARTICLES_MAXCOUNT 64 //must be power of 2 in orderfor array data align to work later on
+#define PARTICLES_MAXCOUNT 128 //must be power of 2 in orderfor array data align to work later on
 #define PARTICLES_DEFAULTMASS 1000.0 // 1.0 is 1 kg
 #define GRAVITATIONALCONSTANT 0.00000000006673 // real value is 6.673 * 10^-11
 #define DELTA_TIME 60.0
 #define GRID_SIZE 10 // grid is a +- GRID_SIZE/2 cube
 #define EPS 1.0 // EPS^2 constant to avoid singularities
-#define ITERATION_COUNT 100
+#define ITERATION_COUNT 1000
 
 typedef struct 
 {
@@ -102,6 +133,9 @@ int main(int argc, char **argv)
 	__vector unsigned short resetOctantCount = {0,0,0,0,0,0,0};
 	__vector unsigned short increment = {1,1,1,1,1,1,1,1};
 
+	__vector float tempUnitVector = {0,0,0,0};
+	__vector float distanceVector = {0,0,0,0};
+
 	//stupid C99, need to declare indicies before for loops
 	int i = 0;
 	int j = 0;
@@ -139,7 +173,8 @@ int main(int argc, char **argv)
 
 				tempDistance = vec_sub(pDj.position,pDi.position); //actual distance vector between objects i and j
 				
-
+				// save value for unit vector calculation later
+				distanceVector = tempDistance;
 
 				/* //Print distances between particles
 				printf("Particle %d:   ", i );
@@ -179,6 +214,9 @@ int main(int argc, char **argv)
 				// add EPS to avoid singularity
 				tempDistance =  vec_add(tempDistance, tempEPS); //this is now the denominator value
 
+				//save inverse magnitude for unit vector later
+				tempUnitVector = vec_rsqrte(tempDistance);
+
 				// invert vector to avoid division later
 				tempDistance = vec_re(tempDistance); // this is final denominator (already inverted), only need to multiply
 				// tempDistance is now eqivalent to 1/r^2 
@@ -193,7 +231,14 @@ int main(int argc, char **argv)
 
 				//total acceleration applied to particle i, by particle j
 				tempAcceleration = vec_madd(tempDistance, tempNumerator, zeroVector);
+
+				// create unit vector
+				tempUnitVector = vec_madd(distanceVector, tempUnitVector, zeroVector);
 				
+				// apply unit vector to acceleration
+				tempAcceleration = vec_madd(tempUnitVector, tempAcceleration, zeroVector);
+
+
 				//increment velocity value of particle with a*dt
 				// need to explicitly call the array, since pDi is only a temp pass by value, doesn't change the particle
 				particle_Array[i].velocity = vec_madd(tempAcceleration, tempDELATTIME, particle_Array[i].velocity);
@@ -284,13 +329,14 @@ int main(int argc, char **argv)
 		}
 
 		//end of main loop
-
+/*
 		printf("End of iteration %d --->    ",it_counter );
 		printf("Particle disttribution across the octants: \n");
 		printf("O0: %d    O1: %d    O2: %d    O3: %d    O4: %d    O5: %d    O6: %d    O7: %d\n",
 				octantCount[0], octantCount[1], octantCount[2], octantCount[3], 
 				octantCount[4],	octantCount[5], octantCount[6], octantCount[7]);
 		printf("\n");
+		*/
 	}
 
 
@@ -300,6 +346,13 @@ int main(int argc, char **argv)
 	printf("Particle %d final position:   ", i );
 	printf("x= %f, y=%f, z=%f", particle_Array[i].position[0], particle_Array[i].position[1], particle_Array[i].position[2]);
 	printf("\n");
+
+	printf("End of iteration %d --->    ",it_counter );
+		printf("Particle disttribution across the octants: \n");
+		printf("O0: %d    O1: %d    O2: %d    O3: %d    O4: %d    O5: %d    O6: %d    O7: %d\n",
+				octantCount[0], octantCount[1], octantCount[2], octantCount[3], 
+				octantCount[4],	octantCount[5], octantCount[6], octantCount[7]);
+		printf("\n");
 	}
 
 
