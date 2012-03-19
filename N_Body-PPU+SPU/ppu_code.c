@@ -75,7 +75,7 @@ void *spe_function(void *data)
 
 	do 
 	{
-		retval = spe_context_run(my_context, &entry_point, 0, NULL, NULL, NULL);
+		retval = spe_context_run(my_context, &entry_point, 0, NULL, &spe1_Data, NULL);
 	} 
 	while (retval > 0); /* Run until exit or error */
 
@@ -116,10 +116,11 @@ int main(int argc, char **argv)
 
 		//particle_Array[pC].position = vec_splat(particle_Array[pC].position, 1);
 		//particle_Array[pC].position = vec_splats((float)GRAVITATIONALCONSTANT); --> use splats, seems faster
-
+		/*
 		printf("Particle %d:   ", pC );
 		printf("x= %f, y=%f, z=%f", particle_Array[pC].position[0], particle_Array[pC].position[1], particle_Array[pC].position[2]);
 		printf("\n");
+		*/
 	}
 
 
@@ -151,9 +152,9 @@ int main(int argc, char **argv)
 	//create thread
 	spe1Retval = pthread_create(
 								&spe1Thread,
-								NULL,
+								NULL, // thread attributes
 								spe_function,
-								NULL
+								NULL // thread argument
 								);
 
 	/* Check for thread creation errors */
@@ -172,6 +173,51 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Error joining thread! Exit code is: %d\n", spe1Retval);
 		exit(1);
 	}
+
+
+
+
+	pthread_t spe2Thread;
+	int spe2Retval;
+
+	//create thread
+	spe2Retval = pthread_create(
+								&spe2Thread,
+								NULL,
+								spe_function,
+								NULL
+								);
+
+	/* Check for thread creation errors */
+	if(spe2Retval) 
+	{
+		fprintf(stderr, "Error creating thread! Exit code is: %d\n", spe2Retval);
+		exit(1);
+	}
+
+
+	//Wait for thread completion
+	spe2Retval = pthread_join(spe2Thread, NULL);
+	// Check for errors
+	if(spe2Retval)
+	{
+		fprintf(stderr, "Error joining thread! Exit code is: %d\n", spe2Retval);
+		exit(1);
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

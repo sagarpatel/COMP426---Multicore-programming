@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <spu_intrinsics.h>
+#include <spu_mfcio.h>
 
 
 
@@ -21,7 +22,7 @@ typedef struct
 } 
 particle_Data;
 
-particle_Data particle_Array[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(particle_Data)*PARTICLES_MAXCOUNT)));
+volatile particle_Data particle_Array[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(particle_Data)*PARTICLES_MAXCOUNT)));
 
 
 int main(unsigned long long spe_id, unsigned long long pdata)
@@ -30,6 +31,21 @@ int main(unsigned long long spe_id, unsigned long long pdata)
 
 
 ///main loop
+
+   unsigned int tag_id;
+
+  /* Reserve a tag for application usage */
+  if ((tag_id = mfc_tag_reserve()) == MFC_TAG_INVALID) 
+  {
+    printf("ERROR: unable to reserve a tag\n");
+    return 1;
+  }
+
+
+
+  	mfc_get(&particle_Array, pdata, sizeof(particle_Array),tag_id, 0, 0);
+
+  	printf("%d\n", &particle_Array );
 	
 
 	// temp particle Datas used for calculations, not pointers, purposefully passed by value
@@ -225,8 +241,8 @@ int main(unsigned long long spe_id, unsigned long long pdata)
 
 
 
-
-
+	printf("\n");
+	printf("End of SPU code\n");
 
 
 
