@@ -5,6 +5,8 @@
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
 
+#include "common.h"
+
 
 
 #define PARTICLES_MAXCOUNT 64 //must be power of 2 in orderfor array data align to work later on
@@ -251,3 +253,4 @@ int main(unsigned long long spe_id, unsigned long long pdata)
 
   return (0);
 }
+
