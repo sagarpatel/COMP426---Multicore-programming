@@ -15,6 +15,7 @@
 #include <altivec.h>
 #include <ppu_intrinsics.h>
 #include <libspe2.h>
+#include <stdlib.h>
 
 #include "common.h"
 
@@ -51,26 +52,6 @@ particle_Data spe5_Data[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(partic
 particle_Data spe6_Data[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(particle_Data)*PARTICLES_MAXCOUNT)));
 
 // based off http://www.ibm.com/developerworks/library/pa-libspe2/
-void *spe_function(void *data)
-{
-
-	int retval;
-	unsigned int entry_point = SPE_DEFAULT_ENTRY;
-	spe_context_ptr_t my_context;
-
-	my_context = spe_context_create(SPE_EVENTS_ENABLE|SPE_MAP_PS, NULL);
-
-	spe_program_load(my_context, &spe_code);
-
-	do 
-	{
-		retval = spe_context_run(my_context, &entry_point, 0, NULL, &spe1_Data, NULL);
-	} 
-	while (retval > 0); /* Run until exit or error */
-
-	pthread_exit(NULL);
-
-}
 
 
 int main(int argc, char **argv)
@@ -84,7 +65,7 @@ int main(int argc, char **argv)
 	//seed random generator
 	srand( time(NULL) );
 
-	printf("\n\n\n~~~~~~~~Printing out particles and their randomly assigned positions: \n\n");
+//	printf("\n\n\n~~~~~~~~Printing out particles and their randomly assigned positions: \n\n");
 
 	int pC = 0;
 	for(pC = 0; pC < PARTICLES_MAXCOUNT; ++pC)
@@ -134,81 +115,24 @@ int main(int argc, char **argv)
 
 
 
-	// start threading code
-	pthread_t spe1Thread;
-	int spe1Retval;
 
-	//create thread
-	spe1Retval = pthread_create(
-								&spe1Thread,
-								NULL, // thread attributes
-								spe_function,
-								NULL // thread argument
-								);
+	int spe1_ID;
+	spe1_ID = spe_context_create(0,NULL);
+	spe_program_load(spe1_ID, &spe_code );
+	spe_context_run(spe1_ID, &entry, 0, &spe1_Data, NULL, &stop_info);
 
-	/* Check for thread creation errors */
-	if(spe1Retval) 
+	spe_context_destroy(spe1_ID);
+
+	printf("print out values from post spe calculations\n");
+	int i = 0;
+	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
 	{
-		fprintf(stderr, "Error creating thread! Exit code is: %d\n", spe1Retval);
-		exit(1);
+
+		printf("Particle %d positions:   ", i );
+		printf("x= %f, y=%f, z=%f", spe1_Data[i].position[0], spe1_Data[i].position[1], spe1_Data[i].position[2]);
+		printf("\n");
+	
 	}
-
-
-	//Wait for thread completion
-	spe1Retval = pthread_join(spe1Thread, NULL);
-	// Check for errors
-	if(spe1Retval)
-	{
-		fprintf(stderr, "Error joining thread! Exit code is: %d\n", spe1Retval);
-		exit(1);
-	}
-
-
-
-
-	pthread_t spe2Thread;
-	int spe2Retval;
-
-	//create thread
-	spe2Retval = pthread_create(
-								&spe2Thread,
-								NULL,
-								spe_function,
-								NULL
-								);
-
-	/* Check for thread creation errors */
-	if(spe2Retval) 
-	{
-		fprintf(stderr, "Error creating thread! Exit code is: %d\n", spe2Retval);
-		exit(1);
-	}
-
-
-	//Wait for thread completion
-	spe2Retval = pthread_join(spe2Thread, NULL);
-	// Check for errors
-	if(spe2Retval)
-	{
-		fprintf(stderr, "Error joining thread! Exit code is: %d\n", spe2Retval);
-		exit(1);
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

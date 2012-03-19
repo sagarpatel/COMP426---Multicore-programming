@@ -8,15 +8,6 @@
 #include "common.h"
 
 
-
-#define PARTICLES_MAXCOUNT 64 //must be power of 2 in orderfor array data align to work later on
-#define PARTICLES_DEFAULTMASS 1000.0 // 1.0 is 1 kg
-#define GRAVITATIONALCONSTANT 0.00000000006673 // real value is 6.673 * 10^-11
-#define DELTA_TIME 60.0
-#define GRID_SIZE 10 // grid is a +- GRID_SIZE/2 cube
-#define EPS 1.0 // EPS^2 constant to avoid singularities
-#define ITERATION_COUNT 100
-
 typedef struct 
 {
 	__vector float position;	// includes x,y,z --> 4th vector element will be used to store quadrant id of the particle
@@ -43,12 +34,22 @@ int main(unsigned long long spe_id, unsigned long long pdata)
     return 1;
   }
 
-
+  	printf("%d\n", pdata );
 
   	mfc_get(&particle_Array, pdata, sizeof(particle_Array),tag_id, 0, 0);
+  	
+
+  	printf("after mfc_get\n");
+
+  	mfc_write_tag_mask(1<<tag_id);
+
+  	//wait for DMA and gurantee completion
+  	mfc_read_tag_status_all();
+
 
   	printf("%d\n", &particle_Array );
 	
+	printf("after array address\n");
 
 	// temp particle Datas used for calculations, not pointers, purposefully passed by value
 	particle_Data pDi;
@@ -225,20 +226,13 @@ int main(unsigned long long spe_id, unsigned long long pdata)
 		// spu_madd is awesome, it all gets done in one line! emulated the += operator, kinda, but more flexible
 		particle_Array[i].position = spu_madd(particle_Array[i].velocity, tempDELATTIME, particle_Array[i].position);
 
-	/*			
+			
 		printf("Particle %d positions:   ", i );
 		printf("x= %f, y=%f, z=%f", particle_Array[i].position[0], particle_Array[i].position[1], particle_Array[i].position[2]);
 		printf("\n");
-	*/
+	
 
 	}
-
-
-
-
-
-
-
 
 
 
@@ -247,6 +241,13 @@ int main(unsigned long long spe_id, unsigned long long pdata)
 	printf("End of SPU code\n");
 
 
+
+	//send back data
+	mfc_put (&particle_Array, pdata, sizeof(particle_Array),tag_id, 0, 0);
+
+    // wait for the DMA put to complete 
+    mfc_write_tag_mask (1 << tag_id);
+    mfc_read_tag_status_all ();
 
 
 
