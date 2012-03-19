@@ -5,7 +5,7 @@
 
 #define PARTICLES_MAXCOUNT 4 //must be power of 2 in orderfor array data align to work later on
 #define PARTICLES_DEFAULTMASS 1000.0 // 1.0 is 1 kg
-#define GRAVITATIONALCONSTANT  1 //0.00000000006673 // real value is 6.673 * 10^-11
+#define GRAVITATIONALCONSTANT  0.00000000006673 // real value is 6.673 * 10^-11
 #define DELTA_TIME 60.0
 #define GRID_SIZE 10 // grid is a +- GRID_SIZE/2 cube
 #define EPS 1.0 // EPS^2 constant to avoid singularities

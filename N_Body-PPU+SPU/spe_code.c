@@ -112,7 +112,6 @@ int main(unsigned long long spe_id, unsigned long long pdata)
 			//cache the particle data struct to the temp declared outside the loops
 			pDj = particle_Array[j];
 
-			// Formula being used --> a = (G * m )/(r^2)
 
 			tempDistance = spu_sub(pDj.position,pDi.position); //actual distance vector between objects i and j
 			
@@ -120,12 +119,12 @@ int main(unsigned long long spe_id, unsigned long long pdata)
 			distanceVector = tempDistance;
 
 
-
-			/* //Print distances between particles
+			/*
+			 //Print distances between particles
 			printf("Particle %d:   ", i );
 			printf("x= %f, y=%f, z=%f", tempDistance[0], tempDistance[1], tempDistance[2]);
 			printf("\n");
-			
+			*/
 
 			//use the distance vector  right now for numerator, before we overwrite is later in the code
 			// use mass of subject mass
@@ -197,12 +196,11 @@ int main(unsigned long long spe_id, unsigned long long pdata)
 			// need to explicitly call the array, since pDi is only a temp pass by value, doesn't change the particle
 			particle_Array[i].velocity = spu_madd(tempAcceleration, tempDELATTIME, particle_Array[i].velocity);
 
-			/*
+			
 			//Print velocity
 			printf("Velocity %d:   ", i );
-			printf("x= %f, y=%f, z=%f", pDi.velocity[0], pDi.velocity[1], pDi.velocity[2]);
+			printf("x= %f, y=%f, z=%f", particle_Array[i].velocity[0], particle_Array[i].velocity[1], particle_Array[i].velocity[2]);
 			printf("\n");
-			*/
 
 
 			/*
