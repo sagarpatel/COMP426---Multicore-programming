@@ -61,6 +61,28 @@ particle_Data spe4_Data[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(partic
 particle_Data spe5_Data[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(particle_Data)*PARTICLES_MAXCOUNT)));
 particle_Data spe6_Data[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(particle_Data)*PARTICLES_MAXCOUNT)));
 
+// based off http://www.ibm.com/developerworks/library/pa-libspe2/
+void *spe_function(void *data)
+{
+
+	int retval;
+	unsigned int entry_point = SPE_DEFAULT_ENTRY;
+	spe_context_ptr_t my_context;
+
+	my_context = spe_context_create(SPE_EVENTS_ENABLE|SPE_MAP_PS, NULL);
+
+	spe_program_load(my_context, &spe_code);
+
+	do 
+	{
+		retval = spe_context_run(my_context, &entry_point, 0, NULL, NULL, NULL);
+	} 
+	while (retval > 0); /* Run until exit or error */
+
+	pthread_exit(NULL);
+
+}
+
 
 int main(int argc, char **argv)
 {
@@ -119,6 +141,39 @@ int main(int argc, char **argv)
 	int speCount = spe_cpu_info_get(SPE_COUNT_PHYSICAL_SPES,-1);
 	printf("\n");
 	printf("%d", speCount);
+
+
+
+	// start threading code
+	pthread_t spe1Thread;
+	int spe1Retval;
+
+	//create thread
+	spe1Retval = pthread_create(
+								&spe1Thread,
+								NULL,
+								spe_function,
+								NULL
+								);
+
+	/* Check for thread creation errors */
+	if(spe1Retval) 
+	{
+		fprintf(stderr, "Error creating thread! Exit code is: %d\n", spe1Retval);
+		exit(1);
+	}
+
+
+	//Wait for thread completion
+	spe1Retval = pthread_join(spe1Thread, NULL);
+	// Check for errors
+	if(spe1Retval)
+	{
+		fprintf(stderr, "Error joining thread! Exit code is: %d\n", spe1Retval);
+		exit(1);
+	}
+
+
 
 
 
