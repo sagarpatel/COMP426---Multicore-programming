@@ -116,10 +116,10 @@ int main(int argc, char **argv)
 
 
 
-	int spe1_ID;
+	spe_context_ptr_t spe1_ID;
 	spe1_ID = spe_context_create(0,NULL);
 	spe_program_load(spe1_ID, &spe_code );
-	spe_context_run(spe1_ID, &entry, 0, &spe1_Data, NULL, &stop_info);
+	spe_context_run(spe1_ID, &entry, 0, &spe1_Data, 6, &stop_info);
 
 	spe_context_destroy(spe1_ID);
 
@@ -135,6 +135,14 @@ int main(int argc, char **argv)
 	}
 
 
+
+	spe_context_ptr_t spe2_ID;
+	spe2_ID = spe_context_create(0,NULL);
+
+	printf("spe1_ID: %d\n",spe1_ID );
+	printf("spe2_ID: %d\n",spe2_ID );
+
+	printf("SPEID diff: %d\n", spe2_ID - spe1_ID );
 
 	return 0;
 }

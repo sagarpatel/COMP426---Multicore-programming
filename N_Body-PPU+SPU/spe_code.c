@@ -18,11 +18,13 @@ particle_Data;
 volatile particle_Data particle_Array[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(particle_Data)*PARTICLES_MAXCOUNT)));
 
 
-int main(unsigned long long spe_id, unsigned long long pdata)
+int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long envp)
 {
   printf("Hello, World! (From SPU:%llx)\n",spe_id);
 
-
+  printf("envp value: %llx \n", envp);
+  printf("envp int version %d\n", (int)envp );
+  printf("testing new comile mechanism\n");
 ///main loop
 
    unsigned int tag_id;
@@ -97,7 +99,7 @@ int main(unsigned long long spe_id, unsigned long long pdata)
 	// this first loop is to calculate the forces/accelerations
 	// NOTE ---> NO FORCES ARE APPLIED IN THIS LOOP, NO POSITIONS WILL BE CHANGED.
 	// The calculated accelerations will be used to increment the particles velocity vector, NOT POSITION
-	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+	for(i = (spe_id -1) * PARTICLES_MAXCOUNT/6; i<PARTICLES_MAXCOUNT; ++i)
 	{
 		//cache the particle data struct to the temp declared outside the loops
 		pDi = particle_Array[i];
