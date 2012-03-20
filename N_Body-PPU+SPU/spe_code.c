@@ -91,16 +91,21 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
 	int j = 0;
 	int it_counter = 0;
 
-	printf("\n^^^^^^^   Now starting main loop\n\n\n");
+	printf("\n^^^^^^^   Now starting main loop of spe : %d \n\n\n", (int)envp);
 
 
-
+	int startPoint = ((int)envp - 1) * PARTICLES_MAXCOUNT/SPU_COUNT;
+	int endPoint = envp*PARTICLES_MAXCOUNT/SPU_COUNT;
+	// to avoid out of bounds array
+	if (endPoint > PARTICLES_MAXCOUNT)
+		endPoint = PARTICLES_MAXCOUNT;
 
 	// this first loop is to calculate the forces/accelerations
 	// NOTE ---> NO FORCES ARE APPLIED IN THIS LOOP, NO POSITIONS WILL BE CHANGED.
 	// The calculated accelerations will be used to increment the particles velocity vector, NOT POSITION
-	for(i = (spe_id -1) * PARTICLES_MAXCOUNT/6; i<PARTICLES_MAXCOUNT; ++i)
+	for(i = startPoint ; i< endPoint ; ++i)
 	{
+
 		//cache the particle data struct to the temp declared outside the loops
 		pDi = particle_Array[i];
 
@@ -226,10 +231,11 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
 		// spu_madd is awesome, it all gets done in one line! emulated the += operator, kinda, but more flexible
 		particle_Array[i].position = spu_madd(particle_Array[i].velocity, tempDELATTIME, particle_Array[i].position);
 
-			
+		/*
 		printf("Particle %d positions:   ", i );
 		printf("x= %f, y=%f, z=%f", particle_Array[i].position[0], particle_Array[i].position[1], particle_Array[i].position[2]);
 		printf("\n");
+		*/
 	
 
 	}

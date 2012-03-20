@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 	//seed random generator
 	srand( time(NULL) );
 
-//	printf("\n\n\n~~~~~~~~Printing out particles and their randomly assigned positions: \n\n");
+	printf("\n\n\n~~~~~~~~Printing out particles and their randomly assigned positions: \n\n");
 
 	int pC = 0;
 	for(pC = 0; pC < PARTICLES_MAXCOUNT; ++pC)
@@ -86,11 +86,11 @@ int main(int argc, char **argv)
 
 		//particle_Array[pC].position = vec_splat(particle_Array[pC].position, 1);
 		//particle_Array[pC].position = vec_splats((float)GRAVITATIONALCONSTANT); --> use splats, seems faster
-		/*
+		
 		printf("Particle %d:   ", pC );
 		printf("x= %f, y=%f, z=%f", particle_Array[pC].position[0], particle_Array[pC].position[1], particle_Array[pC].position[2]);
 		printf("\n");
-		*/
+		
 	}
 
 
@@ -113,16 +113,72 @@ int main(int argc, char **argv)
 	printf("\n");
 	printf("%d", speCount);
 
+	printf("\n");
+	printf("\n");
+	printf("--------------\n");
+	printf("Starting spe1 part\n");
 
-
-
+	//spe1 part
 	spe_context_ptr_t spe1_ID;
 	spe1_ID = spe_context_create(0,NULL);
 	spe_program_load(spe1_ID, &spe_code );
-	spe_context_run(spe1_ID, &entry, 0, &spe1_Data, 6, &stop_info);
-
+	spe_context_run(spe1_ID, &entry, 0, &spe1_Data, 1, &stop_info);
 	spe_context_destroy(spe1_ID);
 
+
+	printf("Starting spe2 part\n");
+
+	//spe2 part
+	spe_context_ptr_t spe2_ID;
+	spe2_ID = spe_context_create(0,NULL);
+	spe_program_load(spe2_ID, &spe_code );
+	spe_context_run(spe2_ID, &entry, 0, &spe2_Data, 2, &stop_info);
+	spe_context_destroy(spe2_ID);
+
+
+	printf("Starting spe3 part\n");
+
+
+	//spe3 part
+	spe_context_ptr_t spe3_ID;
+	spe3_ID = spe_context_create(0,NULL);
+	spe_program_load(spe3_ID, &spe_code );
+	spe_context_run(spe3_ID, &entry, 0, &spe3_Data, 3, &stop_info);
+	spe_context_destroy(spe3_ID);
+
+	printf("Starting spe4 part\n");
+
+
+	//spe4 part
+	spe_context_ptr_t spe4_ID;
+	spe4_ID = spe_context_create(0,NULL);
+	spe_program_load(spe4_ID, &spe_code );
+	spe_context_run(spe4_ID, &entry, 0, &spe4_Data, 4, &stop_info);
+	spe_context_destroy(spe4_ID);
+
+	printf("Starting spe5 part\n");
+
+
+	//spe5 part
+	spe_context_ptr_t spe5_ID;
+	spe5_ID = spe_context_create(0,NULL);
+	spe_program_load(spe5_ID, &spe_code );
+	spe_context_run(spe5_ID, &entry, 0, &spe5_Data, 5, &stop_info);
+	spe_context_destroy(spe5_ID);
+
+
+	printf("Starting spe6 part\n");
+
+	//spe6 part
+	spe_context_ptr_t spe6_ID;
+	spe6_ID = spe_context_create(0,NULL);
+	spe_program_load(spe6_ID, &spe_code );
+	spe_context_run(spe6_ID, &entry, 0, &spe6_Data, 6, &stop_info);
+	spe_context_destroy(spe6_ID);
+
+
+
+/*
 	printf("print out values from post spe calculations\n");
 	int i = 0;
 	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
@@ -133,16 +189,10 @@ int main(int argc, char **argv)
 		printf("\n");
 	
 	}
+*/
 
 
 
-	spe_context_ptr_t spe2_ID;
-	spe2_ID = spe_context_create(0,NULL);
-
-	printf("spe1_ID: %d\n",spe1_ID );
-	printf("spe2_ID: %d\n",spe2_ID );
-
-	printf("SPEID diff: %d\n", spe2_ID - spe1_ID );
 
 	return 0;
 }
