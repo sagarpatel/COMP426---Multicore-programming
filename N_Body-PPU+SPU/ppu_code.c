@@ -56,11 +56,11 @@ particle_Data tempParticleArray[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeo
 
 
 int speNumber = 0;
-particle_Data* speData;
+//particle_Data* speData;
 int i;
 // based off http://www.ibm.com/developerworks/library/pa-libspe2/
 /* NOTE -- the prototype is based on the standard pthread thread signature */
-void *spe_code_launch(void *data) 
+void *spe_code_launch(void *speData) 
 {
 	printf("inside of thread function\n");
 
@@ -90,6 +90,8 @@ void *spe_code_launch(void *data)
 
 	} 
 	while (retval > 0); /* Run until exit or error */
+	
+	spe_context_destroy(my_context);	
 
 	pthread_exit(NULL);
 }
@@ -168,70 +170,66 @@ int main(int argc, char **argv)
 	pthread_t spe6_Thread;
 
 
-	speData = spe1_Data;
+	//speData = spe1_Data;
 	speNumber = 0;
 	/* Create Thread */
-	retval = pthread_create(&spe1_Thread, /* Thread object */
-							NULL, /* Thread attributes */
-							spe_code_launch, /* Thread function */
-							NULL /* Thread argument */
+	retval = pthread_create(&spe1_Thread, // Thread object
+							NULL, // Thread attributes
+							spe_code_launch, // Thread function
+							spe1_Data // Thread argument
 							);
 
-	speData = spe2_Data;
-	retval = pthread_create(&spe2_Thread, /* Thread object */
-							NULL, /* Thread attributes */
-							spe_code_launch, /* Thread function */
-							NULL /* Thread argument */
+	
+	retval = pthread_create(&spe2_Thread, // Thread object
+							NULL, // Thread attributes
+							spe_code_launch, // Thread function
+							spe2_Data // Thread argument
+							);
+	
+	retval = pthread_create(&spe3_Thread, // Thread object
+							NULL, // Thread attributes
+							spe_code_launch, // Thread function
+							spe3_Data // Thread argument
 							);
 
-	speData = spe3_Data;
-	retval = pthread_create(&spe3_Thread, /* Thread object */
-							NULL, /* Thread attributes */
-							spe_code_launch, /* Thread function */
-							NULL /* Thread argument */
+	retval = pthread_create(&spe4_Thread, // Thread object
+							NULL, // Thread attributes
+							spe_code_launch, // Thread function
+							spe4_Data // Thread argument
 							);
 
-	speData = spe4_Data;
-	retval = pthread_create(&spe4_Thread, /* Thread object */
-							NULL, /* Thread attributes */
-							spe_code_launch, /* Thread function */
-							NULL /* Thread argument */
+	retval = pthread_create(&spe5_Thread, // Thread object
+							NULL, // Thread attributes
+							spe_code_launch, // Thread function
+							spe5_Data // Thread argument
 							);
 
-	speData = spe5_Data;
-	retval = pthread_create(&spe5_Thread, /* Thread object */
-							NULL, /* Thread attributes */
-							spe_code_launch, /* Thread function */
-							NULL /* Thread argument */
+	retval = pthread_create(&spe6_Thread, // Thread object
+							NULL, // Thread attributes
+							spe_code_launch, // Thread function
+							spe6_Data // Thread argument
 							);
-
-	speData = spe6_Data;
-	retval = pthread_create(&spe6_Thread, /* Thread object */
-							NULL, /* Thread attributes */
-							spe_code_launch, /* Thread function */
-							NULL /* Thread argument */
-							);
+	
 
 
 
-
-	/* Wait for Thread Completion */
+	//Wait for Thread Completion
 	retval = pthread_join(spe1_Thread, NULL);
 	retval = pthread_join(spe2_Thread, NULL);
 	retval = pthread_join(spe3_Thread, NULL);
 	retval = pthread_join(spe4_Thread, NULL);
 	retval = pthread_join(spe5_Thread, NULL);
 	retval = pthread_join(spe6_Thread, NULL);
+	
 
-
-
+	
 	printf("print out values from post spe calculations\n");
 	i = 0;
 	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
 	{
 
 		printf("Particle %d positions:   ", i );
-		printf("x= %f, y=%f, z=%f", spe1_Data[i].position[0], spe1_Data[i].position[1], spe1_Data[i].position[2]);
+		printf("x= %f, y=%f, z=%f", spe6_Data[i].position[0], spe6_Data[i].position[1], spe6_Data[i].position[2]);
 		printf("\n");
 	
 	}
