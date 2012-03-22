@@ -3,7 +3,7 @@
 #ifndef __common_h__
 #define __common_h__
 
-#define PARTICLES_MAXCOUNT 4 //must be power of 2 in orderfor array data align to work later on
+#define PARTICLES_MAXCOUNT 8 //must be power of 2 in orderfor array data align to work later on
 #define PARTICLES_DEFAULTMASS 1000.0 // 1.0 is 1 kg
 #define GRAVITATIONALCONSTANT  0.00000000006673 // real value is 6.673 * 10^-11
 #define DELTA_TIME 60.0

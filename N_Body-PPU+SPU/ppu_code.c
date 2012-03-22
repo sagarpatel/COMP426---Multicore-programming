@@ -51,9 +51,13 @@ particle_Data spe4_Data[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(partic
 particle_Data spe5_Data[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(particle_Data)*PARTICLES_MAXCOUNT)));
 particle_Data spe6_Data[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(particle_Data)*PARTICLES_MAXCOUNT)));
 
+
+particle_Data tempParticleArray[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(particle_Data)*PARTICLES_MAXCOUNT)));
+
+
 int speNumber = 0;
 particle_Data* speData;
-
+int i;
 // based off http://www.ibm.com/developerworks/library/pa-libspe2/
 /* NOTE -- the prototype is based on the standard pthread thread signature */
 void *spe_code_launch(void *data) 
@@ -65,7 +69,7 @@ void *spe_code_launch(void *data)
       execution, SPE_DEFAULT_ENTRY is the standard starting offset. */
 	spe_context_ptr_t my_context;
 
-	printf("befreo createing context\n");
+	printf("before creating context\n");
 
 	/* Create the SPE Context */
 	my_context = spe_context_create(SPE_EVENTS_ENABLE|SPE_MAP_PS, NULL);
@@ -77,10 +81,12 @@ void *spe_code_launch(void *data)
 
 	printf("program loaded\n");
 
+	speNumber ++;
+
 	/* Run the SPE program until completion */
 	do 
 	{
-		retval = spe_context_run(my_context, &entry_point, 0, speData, &speNumber, NULL);
+		retval = spe_context_run(my_context, &entry_point, 0, speData, speNumber, NULL);
 
 	} 
 	while (retval > 0); /* Run until exit or error */
@@ -163,7 +169,7 @@ int main(int argc, char **argv)
 
 
 	speData = spe1_Data;
-	speNumber = 1;
+	speNumber = 0;
 	/* Create Thread */
 	retval = pthread_create(&spe1_Thread, /* Thread object */
 							NULL, /* Thread attributes */
@@ -171,11 +177,56 @@ int main(int argc, char **argv)
 							NULL /* Thread argument */
 							);
 
+	speData = spe2_Data;
+	retval = pthread_create(&spe2_Thread, /* Thread object */
+							NULL, /* Thread attributes */
+							spe_code_launch, /* Thread function */
+							NULL /* Thread argument */
+							);
+
+	speData = spe3_Data;
+	retval = pthread_create(&spe3_Thread, /* Thread object */
+							NULL, /* Thread attributes */
+							spe_code_launch, /* Thread function */
+							NULL /* Thread argument */
+							);
+
+	speData = spe4_Data;
+	retval = pthread_create(&spe4_Thread, /* Thread object */
+							NULL, /* Thread attributes */
+							spe_code_launch, /* Thread function */
+							NULL /* Thread argument */
+							);
+
+	speData = spe5_Data;
+	retval = pthread_create(&spe5_Thread, /* Thread object */
+							NULL, /* Thread attributes */
+							spe_code_launch, /* Thread function */
+							NULL /* Thread argument */
+							);
+
+	speData = spe6_Data;
+	retval = pthread_create(&spe6_Thread, /* Thread object */
+							NULL, /* Thread attributes */
+							spe_code_launch, /* Thread function */
+							NULL /* Thread argument */
+							);
 
 
-/*
+
+
+	/* Wait for Thread Completion */
+	retval = pthread_join(spe1_Thread, NULL);
+	retval = pthread_join(spe2_Thread, NULL);
+	retval = pthread_join(spe3_Thread, NULL);
+	retval = pthread_join(spe4_Thread, NULL);
+	retval = pthread_join(spe5_Thread, NULL);
+	retval = pthread_join(spe6_Thread, NULL);
+
+
+
 	printf("print out values from post spe calculations\n");
-	int i = 0;
+	i = 0;
 	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
 	{
 
@@ -184,7 +235,73 @@ int main(int argc, char **argv)
 		printf("\n");
 	
 	}
-*/
+
+
+
+
+
+	
+
+	speNumber = 1;
+	
+	for(i=speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+	{
+		particle_Array[i] = spe1_Data[i];
+	}
+
+	speNumber = 2;
+	for(i=speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+	{
+		particle_Array[i] = spe2_Data[i];
+	}
+
+	speNumber = 3;
+	for(i=speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+	{
+		particle_Array[i] = spe3_Data[i];
+	}
+
+	speNumber = 4;
+	for(i=speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+	{
+		particle_Array[i] = spe4_Data[i];
+	}
+
+	speNumber = 5;
+	for(i=speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+	{
+		particle_Array[i] = spe5_Data[i];
+	}
+
+	speNumber = 6;
+	for(i=speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; i<PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+	{
+		particle_Array[i] = spe6_Data[i];
+	}
+
+	// reset spe counter
+	speNumber = 0;
+
+
+
+	
+
+
+	// copy arrays into spe ones
+	pC = 0;
+	for(pC = 0; pC < PARTICLES_MAXCOUNT; ++pC)
+	{
+
+		spe1_Data[pC] = particle_Array[pC];	
+		spe2_Data[pC] = particle_Array[pC];	
+		spe3_Data[pC] = particle_Array[pC];	
+		spe4_Data[pC] = particle_Array[pC];	
+		spe5_Data[pC] = particle_Array[pC];	
+		spe6_Data[pC] = particle_Array[pC];		
+	}
+
+
+
 
 
 

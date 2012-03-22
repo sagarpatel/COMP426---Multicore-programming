@@ -22,9 +22,9 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
 {
   printf("Hello, World! (From SPU:%llx)\n",spe_id);
 
-  printf("envp value: %llx \n", envp);
-  printf("envp int version %d\n", (int)envp );
-  printf("testing new comile mechanism\n");
+  printf("envp value: %d \n", (int)envp);
+
+
 ///main loop
 
    unsigned int tag_id;
@@ -36,12 +36,15 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
     return 1;
   }
 
-  	printf("%d\n", pdata );
+  	/*
+  	printf("particle_Array value %d \n", particle_Array);
+  	printf("&particle_Array value %d \n", &particle_Array);
+	*/
 
   	mfc_get(&particle_Array, pdata, sizeof(particle_Array),tag_id, 0, 0);
   	
 
-  	printf("after mfc_get\n");
+  	//printf("after mfc_get\n");
 
   	mfc_write_tag_mask(1<<tag_id);
 
@@ -51,7 +54,7 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
 
   	printf("%d\n", &particle_Array );
 	
-	printf("after array address\n");
+	//printf("after array address\n");
 
 	// temp particle Datas used for calculations, not pointers, purposefully passed by value
 	particle_Data pDi;
@@ -99,6 +102,10 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
 	// to avoid out of bounds array
 	if (endPoint > PARTICLES_MAXCOUNT)
 		endPoint = PARTICLES_MAXCOUNT;
+
+
+	printf("startPoint: %d\n", startPoint );
+	printf("endPoint: %d\n", endPoint );
 
 	// this first loop is to calculate the forces/accelerations
 	// NOTE ---> NO FORCES ARE APPLIED IN THIS LOOP, NO POSITIONS WILL BE CHANGED.
@@ -203,12 +210,12 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
 			// need to explicitly call the array, since pDi is only a temp pass by value, doesn't change the particle
 			particle_Array[i].velocity = spu_madd(tempAcceleration, tempDELATTIME, particle_Array[i].velocity);
 
-			
+			/*
 			//Print velocity
 			printf("Velocity %d:   ", i );
 			printf("x= %f, y=%f, z=%f", particle_Array[i].velocity[0], particle_Array[i].velocity[1], particle_Array[i].velocity[2]);
 			printf("\n");
-
+			*/
 
 			/*
 
@@ -225,17 +232,17 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
 
 	//now that all the accelerations for all particles are calculated,
 	//apply them and update velocity 
-	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+	for(i = startPoint; i<endPoint; ++i)
 	{
 		//incrementing position with v*dt
 		// spu_madd is awesome, it all gets done in one line! emulated the += operator, kinda, but more flexible
 		particle_Array[i].position = spu_madd(particle_Array[i].velocity, tempDELATTIME, particle_Array[i].position);
 
-		/*
+		
 		printf("Particle %d positions:   ", i );
 		printf("x= %f, y=%f, z=%f", particle_Array[i].position[0], particle_Array[i].position[1], particle_Array[i].position[2]);
 		printf("\n");
-		*/
+		
 	
 
 	}
@@ -244,8 +251,8 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
 
 
 	printf("\n");
-	printf("End of SPU code\n");
-
+	printf("End of SPU #%d\n", (int)envp);
+	printf("///////////////////\n\n");
 
 
 	//send back data
