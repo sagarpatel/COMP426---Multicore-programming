@@ -335,43 +335,102 @@ int main(int argc, char **argv)
 	retval = pthread_join(spe5_Thread, NULL);
 	retval = pthread_join(spe6_Thread, NULL);
 	
+	printf("print out values from post spe1 calculations\n");
+	i = 0;
+	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+	{
 
+		printf("Particle %d positions:   ", i );
+		printf("x= %f, y=%f, z=%f", spe1_Data[i].position[0], spe1_Data[i].position[1], spe1_Data[i].position[2]);
+		printf("\n");
+	
+	}
+	printf("print out values from post spe2 calculations\n");
+	i = 0;
+	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+	{
+
+		printf("Particle %d positions:   ", i );
+		printf("x= %f, y=%f, z=%f", spe2_Data[i].position[0], spe2_Data[i].position[1], spe2_Data[i].position[2]);
+		printf("\n");
+	
+	}
+	printf("print out values from post spe3 calculations\n");
+	i = 0;
+	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+	{
+
+		printf("Particle %d positions:   ", i );
+		printf("x= %f, y=%f, z=%f", spe3_Data[i].position[0], spe3_Data[i].position[1], spe3_Data[i].position[2]);
+		printf("\n");
+	
+	}
+	printf("print out values from post spe4 calculations\n");
+	i = 0;
+	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+	{
+
+		printf("Particle %d positions:   ", i );
+		printf("x= %f, y=%f, z=%f", spe4_Data[i].position[0], spe4_Data[i].position[1], spe4_Data[i].position[2]);
+		printf("\n");
+	
+	}
+	printf("print out values from post spe5 calculations\n");
+	i = 0;
+	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+	{
+
+		printf("Particle %d positions:   ", i );
+		printf("x= %f, y=%f, z=%f", spe5_Data[i].position[0], spe5_Data[i].position[1], spe5_Data[i].position[2]);
+		printf("\n");
+	
+	}
+	printf("print out values from post spe6 calculations\n");
+	i = 0;
+	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+	{
+
+		printf("Particle %d positions:   ", i );
+		printf("x= %f, y=%f, z=%f", spe6_Data[i].position[0], spe6_Data[i].position[1], spe6_Data[i].position[2]);
+		printf("\n");
+	
+	}
 
 	
 
 	speNumber = 1;
 	
-	for(i=speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+	for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
 	{
 		particle_Array[i] = spe1_Data[i];
 	}
 
 	speNumber = 2;
-	for(i=speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+	for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
 	{
 		particle_Array[i] = spe2_Data[i];
 	}
 
 	speNumber = 3;
-	for(i=speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+	for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
 	{
 		particle_Array[i] = spe3_Data[i];
 	}
 
 	speNumber = 4;
-	for(i=speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+	for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
 	{
 		particle_Array[i] = spe4_Data[i];
 	}
 
 	speNumber = 5;
-	for(i=speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+	for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
 	{
 		particle_Array[i] = spe5_Data[i];
 	}
 
 	speNumber = 6;
-	for(i=speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; i<PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+	for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
 	{
 		particle_Array[i] = spe6_Data[i];
 	}
