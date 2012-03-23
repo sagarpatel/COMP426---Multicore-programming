@@ -21,12 +21,12 @@ volatile particle_Data particle_Array[PARTICLES_MAXCOUNT] __attribute__((aligned
 int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long envp)
 {
  
-
+/*
   printf("Hello, World! (From SPU:%llx)\n",spe_id);
 
   printf("envp value: %d \n", (int)envp);
   printf("pdata value: %d\n", (int)pdata );
-
+*/
 ///main loop
 
    unsigned int tag_id;
@@ -54,7 +54,7 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
   	mfc_read_tag_status_all();
 
 
-  	printf("%d\n", &particle_Array );
+  //	printf("%d\n", &particle_Array );
 	
 	//printf("after array address\n");
 
@@ -96,7 +96,7 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
 	int j = 0;
 	int it_counter = 0;
 
-	printf("\n^^^^^^^   Now starting main loop of spe : %d \n\n\n", (int)envp);
+//	printf("\n^^^^^^^   Now starting main loop of spe : %d \n\n\n", (int)envp);
 
 
 	int startPoint = ((int)envp - 1) * PARTICLES_MAXCOUNT/SPU_COUNT;
@@ -252,12 +252,12 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
 
 
 
-
+/*
 	printf("\n");
 	printf("End of SPU #%d\n", (int)envp);
 	printf("///////////////////\n\n");
 
-
+*/
 	//send back data
 	mfc_put (&particle_Array, pdata, sizeof(particle_Array),tag_id, 0, 0);
 

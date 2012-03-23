@@ -275,7 +275,7 @@ int main(int argc, char **argv)
 	for (iterCount = 0; iterCount< ITERATION_COUNT; iterCount++)
 	{
 
-		printf("++++++++++++++ START of ITERATION # %d of %d +++++++++++++++\n", i, ITERATION_COUNT );
+		//printf("++++++++++++++ START of ITERATION # %d of %d +++++++++++++++\n", i, ITERATION_COUNT );
 
 		int retval;
 		pthread_t spe1_Thread;
@@ -464,7 +464,7 @@ int main(int argc, char **argv)
 			spe6_Data[pC] = particle_Array[pC];		
 		}
 
-		printf("++++++++++++++ END of ITERATION # %d of %d +++++++++++++++\n", iterCount, ITERATION_COUNT );
+	//	printf("++++++++++++++ END of ITERATION # %d of %d +++++++++++++++\n", iterCount, ITERATION_COUNT );
 
 
 	}
