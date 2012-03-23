@@ -270,194 +270,204 @@ int main(int argc, char **argv)
 	printf("--------------\n");
 	printf("Starting spe1 part\n");
 */
-	int retval;
-	pthread_t spe1_Thread;
-	pthread_t spe2_Thread;
-	pthread_t spe3_Thread;
-	pthread_t spe4_Thread;
-	pthread_t spe5_Thread;
-	pthread_t spe6_Thread;
 
-
-	//speData = spe1_Data;
-	speNumber = 0;
-	/* Create Thread */
-//	printf("spe1_Data value: %d\n", (int)spe1_Data );
-	retval = pthread_create(&spe1_Thread, // Thread object
-							NULL, // Thread attributes
-							spe_code_launch_1, // Thread function
-							NULL // Thread argument
-							);
-
-//	printf("spe2_Data value: %d\n", (int)spe2_Data );
-	
-	retval = pthread_create(&spe2_Thread, // Thread object
-							NULL, // Thread attributes
-							spe_code_launch_2, // Thread function
-							NULL // Thread argument
-							);
-	
-	retval = pthread_create(&spe3_Thread, // Thread object
-							NULL, // Thread attributes
-							spe_code_launch_3, // Thread function
-							NULL // Thread argument
-							);
-
-	
-	retval = pthread_create(&spe4_Thread, // Thread object
-							NULL, // Thread attributes
-							spe_code_launch_4, // Thread function
-							NULL // Thread argument
-							);
-
-	retval = pthread_create(&spe5_Thread, // Thread object
-							NULL, // Thread attributes
-							spe_code_launch_5, // Thread function
-							NULL // Thread argument
-							);
-
-	retval = pthread_create(&spe6_Thread, // Thread object
-							NULL, // Thread attributes
-							spe_code_launch_6, // Thread function
-							NULL // Thread argument
-							);
-	
-
-
-	//Wait for Thread Completion
-	retval = pthread_join(spe1_Thread, NULL);
-
-	retval = pthread_join(spe2_Thread, NULL);
-
-	
-	retval = pthread_join(spe3_Thread, NULL);
-
-	retval = pthread_join(spe4_Thread, NULL);
-	retval = pthread_join(spe5_Thread, NULL);
-	retval = pthread_join(spe6_Thread, NULL);
-	/*	
-	printf("print out values from post spe1 calculations\n");
-	i = 0;
-	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+	int iterCount = 0;
+	for (iterCount = 0; iterCount< ITERATION_COUNT; iterCount++)
 	{
 
-		printf("Particle %d positions:   ", i );
-		printf("x= %f, y=%f, z=%f", spe1_Data[i].position[0], spe1_Data[i].position[1], spe1_Data[i].position[2]);
-		printf("\n");
-	
+		printf("++++++++++++++ START of ITERATION # %d of %d +++++++++++++++\n", i, ITERATION_COUNT );
+
+		int retval;
+		pthread_t spe1_Thread;
+		pthread_t spe2_Thread;
+		pthread_t spe3_Thread;
+		pthread_t spe4_Thread;
+		pthread_t spe5_Thread;
+		pthread_t spe6_Thread;
+
+
+		//speData = spe1_Data;
+		speNumber = 0;
+		/* Create Thread */
+	//	printf("spe1_Data value: %d\n", (int)spe1_Data );
+		retval = pthread_create(&spe1_Thread, // Thread object
+								NULL, // Thread attributes
+								spe_code_launch_1, // Thread function
+								NULL // Thread argument
+								);
+
+	//	printf("spe2_Data value: %d\n", (int)spe2_Data );
+		
+		retval = pthread_create(&spe2_Thread, // Thread object
+								NULL, // Thread attributes
+								spe_code_launch_2, // Thread function
+								NULL // Thread argument
+								);
+		
+		retval = pthread_create(&spe3_Thread, // Thread object
+								NULL, // Thread attributes
+								spe_code_launch_3, // Thread function
+								NULL // Thread argument
+								);
+
+		
+		retval = pthread_create(&spe4_Thread, // Thread object
+								NULL, // Thread attributes
+								spe_code_launch_4, // Thread function
+								NULL // Thread argument
+								);
+
+		retval = pthread_create(&spe5_Thread, // Thread object
+								NULL, // Thread attributes
+								spe_code_launch_5, // Thread function
+								NULL // Thread argument
+								);
+
+		retval = pthread_create(&spe6_Thread, // Thread object
+								NULL, // Thread attributes
+								spe_code_launch_6, // Thread function
+								NULL // Thread argument
+								);
+		
+
+
+		//Wait for Thread Completion
+		retval = pthread_join(spe1_Thread, NULL);
+
+		retval = pthread_join(spe2_Thread, NULL);
+
+		
+		retval = pthread_join(spe3_Thread, NULL);
+
+		retval = pthread_join(spe4_Thread, NULL);
+		retval = pthread_join(spe5_Thread, NULL);
+		retval = pthread_join(spe6_Thread, NULL);
+		/*	
+		printf("print out values from post spe1 calculations\n");
+		i = 0;
+		for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+		{
+
+			printf("Particle %d positions:   ", i );
+			printf("x= %f, y=%f, z=%f", spe1_Data[i].position[0], spe1_Data[i].position[1], spe1_Data[i].position[2]);
+			printf("\n");
+		
+		}
+		printf("print out values from post spe2 calculations\n");
+		i = 0;
+		for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+		{
+
+			printf("Particle %d positions:   ", i );
+			printf("x= %f, y=%f, z=%f", spe2_Data[i].position[0], spe2_Data[i].position[1], spe2_Data[i].position[2]);
+			printf("\n");
+		
+		}
+		printf("print out values from post spe3 calculations\n");
+		i = 0;
+		for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+		{
+
+			printf("Particle %d positions:   ", i );
+			printf("x= %f, y=%f, z=%f", spe3_Data[i].position[0], spe3_Data[i].position[1], spe3_Data[i].position[2]);
+			printf("\n");
+		
+		}
+		printf("print out values from post spe4 calculations\n");
+		i = 0;
+		for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+		{
+
+			printf("Particle %d positions:   ", i );
+			printf("x= %f, y=%f, z=%f", spe4_Data[i].position[0], spe4_Data[i].position[1], spe4_Data[i].position[2]);
+			printf("\n");
+		
+		}
+		printf("print out values from post spe5 calculations\n");
+		i = 0;
+		for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+		{
+
+			printf("Particle %d positions:   ", i );
+			printf("x= %f, y=%f, z=%f", spe5_Data[i].position[0], spe5_Data[i].position[1], spe5_Data[i].position[2]);
+			printf("\n");
+		
+		}
+		printf("print out values from post spe6 calculations\n");
+		i = 0;
+		for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+		{
+
+			printf("Particle %d positions:   ", i );
+			printf("x= %f, y=%f, z=%f", spe6_Data[i].position[0], spe6_Data[i].position[1], spe6_Data[i].position[2]);
+			printf("\n");
+		
+		}
+	*/
+		
+
+		speNumber = 1;
+		
+		for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+		{
+			particle_Array[i] = spe1_Data[i];
+		}
+
+		speNumber = 2;
+		for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+		{
+			particle_Array[i] = spe2_Data[i];
+		}
+
+		speNumber = 3;
+		for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+		{
+			particle_Array[i] = spe3_Data[i];
+		}
+
+		speNumber = 4;
+		for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+		{
+			particle_Array[i] = spe4_Data[i];
+		}
+
+		speNumber = 5;
+		for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+		{
+			particle_Array[i] = spe5_Data[i];
+		}
+
+		speNumber = 6;
+		for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<PARTICLES_MAXCOUNT; ++i)
+		{
+			particle_Array[i] = spe6_Data[i];
+		}
+
+		// reset spe counter
+		speNumber = 0;
+
+
+
+		
+
+
+		// copy arrays into spe ones
+		pC = 0;
+		for(pC = 0; pC < PARTICLES_MAXCOUNT; ++pC)
+		{
+
+			spe1_Data[pC] = particle_Array[pC];	
+			spe2_Data[pC] = particle_Array[pC];	
+			spe3_Data[pC] = particle_Array[pC];	
+			spe4_Data[pC] = particle_Array[pC];	
+			spe5_Data[pC] = particle_Array[pC];	
+			spe6_Data[pC] = particle_Array[pC];		
+		}
+
+		printf("++++++++++++++ END of ITERATION # %d of %d +++++++++++++++\n", iterCount, ITERATION_COUNT );
+
+
 	}
-	printf("print out values from post spe2 calculations\n");
-	i = 0;
-	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
-	{
-
-		printf("Particle %d positions:   ", i );
-		printf("x= %f, y=%f, z=%f", spe2_Data[i].position[0], spe2_Data[i].position[1], spe2_Data[i].position[2]);
-		printf("\n");
-	
-	}
-	printf("print out values from post spe3 calculations\n");
-	i = 0;
-	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
-	{
-
-		printf("Particle %d positions:   ", i );
-		printf("x= %f, y=%f, z=%f", spe3_Data[i].position[0], spe3_Data[i].position[1], spe3_Data[i].position[2]);
-		printf("\n");
-	
-	}
-	printf("print out values from post spe4 calculations\n");
-	i = 0;
-	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
-	{
-
-		printf("Particle %d positions:   ", i );
-		printf("x= %f, y=%f, z=%f", spe4_Data[i].position[0], spe4_Data[i].position[1], spe4_Data[i].position[2]);
-		printf("\n");
-	
-	}
-	printf("print out values from post spe5 calculations\n");
-	i = 0;
-	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
-	{
-
-		printf("Particle %d positions:   ", i );
-		printf("x= %f, y=%f, z=%f", spe5_Data[i].position[0], spe5_Data[i].position[1], spe5_Data[i].position[2]);
-		printf("\n");
-	
-	}
-	printf("print out values from post spe6 calculations\n");
-	i = 0;
-	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
-	{
-
-		printf("Particle %d positions:   ", i );
-		printf("x= %f, y=%f, z=%f", spe6_Data[i].position[0], spe6_Data[i].position[1], spe6_Data[i].position[2]);
-		printf("\n");
-	
-	}
-*/
-	
-
-	speNumber = 1;
-	
-	for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
-	{
-		particle_Array[i] = spe1_Data[i];
-	}
-
-	speNumber = 2;
-	for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
-	{
-		particle_Array[i] = spe2_Data[i];
-	}
-
-	speNumber = 3;
-	for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
-	{
-		particle_Array[i] = spe3_Data[i];
-	}
-
-	speNumber = 4;
-	for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
-	{
-		particle_Array[i] = spe4_Data[i];
-	}
-
-	speNumber = 5;
-	for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
-	{
-		particle_Array[i] = spe5_Data[i];
-	}
-
-	speNumber = 6;
-	for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<PARTICLES_MAXCOUNT; ++i)
-	{
-		particle_Array[i] = spe6_Data[i];
-	}
-
-	// reset spe counter
-	speNumber = 0;
-
-
-
-	
-
-
-	// copy arrays into spe ones
-	pC = 0;
-	for(pC = 0; pC < PARTICLES_MAXCOUNT; ++pC)
-	{
-
-		spe1_Data[pC] = particle_Array[pC];	
-		spe2_Data[pC] = particle_Array[pC];	
-		spe3_Data[pC] = particle_Array[pC];	
-		spe4_Data[pC] = particle_Array[pC];	
-		spe5_Data[pC] = particle_Array[pC];	
-		spe6_Data[pC] = particle_Array[pC];		
-	}
-
-
 
 	printf("print out values from post spe calculations\n");
 	i = 0;
