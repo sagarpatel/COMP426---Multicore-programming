@@ -55,47 +55,155 @@ particle_Data spe6_Data[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(partic
 particle_Data tempParticleArray[PARTICLES_MAXCOUNT] __attribute__((aligned(sizeof(particle_Data)*PARTICLES_MAXCOUNT)));
 
 
+
 int speNumber = 0;
 //particle_Data* speData;
 int i;
 // based off http://www.ibm.com/developerworks/library/pa-libspe2/
 /* NOTE -- the prototype is based on the standard pthread thread signature */
-void *spe_code_launch(void *speData) 
+void *spe_code_launch_1(void *data) 
 {
-	printf("inside of thread function\n");
-
+//	printf("inside of thread function\n");
 	int retval;
 	unsigned int entry_point = SPE_DEFAULT_ENTRY; /* Required for continuing 
       execution, SPE_DEFAULT_ENTRY is the standard starting offset. */
 	spe_context_ptr_t my_context;
-
-	printf("before creating context\n");
-
+//	printf("before creating context\n");
 	/* Create the SPE Context */
 	my_context = spe_context_create(SPE_EVENTS_ENABLE|SPE_MAP_PS, NULL);
-
-	printf("context created\n");
-
+//	printf("context created\n");
 	/* Load the embedded code into this context */
 	spe_program_load(my_context, &spe_code);
-
-	printf("program loaded\n");
-
-	speNumber ++;
-
+//	printf("program loaded\n");
 	/* Run the SPE program until completion */
 	do 
-	{
-		retval = spe_context_run(my_context, &entry_point, 0, speData, speNumber, NULL);
-
+	{	
+		retval = spe_context_run(my_context, &entry_point, 0, spe1_Data, 1, NULL);
 	} 
 	while (retval > 0); /* Run until exit or error */
-	
 	spe_context_destroy(my_context);	
-
 	pthread_exit(NULL);
 }
 
+void *spe_code_launch_2(void *data) 
+{
+//	printf("inside of thread function\n");
+	int retval;
+	unsigned int entry_point = SPE_DEFAULT_ENTRY; /* Required for continuing 
+      execution, SPE_DEFAULT_ENTRY is the standard starting offset. */
+	spe_context_ptr_t my_context;
+//	printf("before creating context\n");
+	/* Create the SPE Context */
+	my_context = spe_context_create(SPE_EVENTS_ENABLE|SPE_MAP_PS, NULL);
+//	printf("context created\n");
+	/* Load the embedded code into this context */
+	spe_program_load(my_context, &spe_code);
+//	printf("program loaded\n");
+	/* Run the SPE program until completion */
+	do 
+	{	
+		retval = spe_context_run(my_context, &entry_point, 0, spe2_Data, 2, NULL);
+	} 
+	while (retval > 0); /* Run until exit or error */
+	spe_context_destroy(my_context);	
+	pthread_exit(NULL);
+}
+
+void *spe_code_launch_3(void *data) 
+{
+//	printf("inside of thread function\n");
+	int retval;
+	unsigned int entry_point = SPE_DEFAULT_ENTRY; /* Required for continuing 
+      execution, SPE_DEFAULT_ENTRY is the standard starting offset. */
+	spe_context_ptr_t my_context;
+//	printf("before creating context\n");
+	/* Create the SPE Context */
+	my_context = spe_context_create(SPE_EVENTS_ENABLE|SPE_MAP_PS, NULL);
+//	printf("context created\n");
+	/* Load the embedded code into this context */
+	spe_program_load(my_context, &spe_code);
+//	printf("program loaded\n");
+	/* Run the SPE program until completion */
+	do 
+	{	
+		retval = spe_context_run(my_context, &entry_point, 0, spe3_Data, 3, NULL);
+	} 
+	while (retval > 0); /* Run until exit or error */
+	spe_context_destroy(my_context);	
+	pthread_exit(NULL);
+}
+
+void *spe_code_launch_4(void *data) 
+{
+//	printf("inside of thread function\n");
+	int retval;
+	unsigned int entry_point = SPE_DEFAULT_ENTRY; /* Required for continuing 
+      execution, SPE_DEFAULT_ENTRY is the standard starting offset. */
+	spe_context_ptr_t my_context;
+//	printf("before creating context\n");
+	/* Create the SPE Context */
+	my_context = spe_context_create(SPE_EVENTS_ENABLE|SPE_MAP_PS, NULL);
+//	printf("context created\n");
+	/* Load the embedded code into this context */
+	spe_program_load(my_context, &spe_code);
+//	printf("program loaded\n");
+	/* Run the SPE program until completion */
+	do 
+	{	
+		retval = spe_context_run(my_context, &entry_point, 0, spe4_Data, 4, NULL);
+	} 
+	while (retval > 0); /* Run until exit or error */
+	spe_context_destroy(my_context);	
+	pthread_exit(NULL);
+}
+
+void *spe_code_launch_5(void *data) 
+{
+//	printf("inside of thread function\n");
+	int retval;
+	unsigned int entry_point = SPE_DEFAULT_ENTRY; /* Required for continuing 
+      execution, SPE_DEFAULT_ENTRY is the standard starting offset. */
+	spe_context_ptr_t my_context;
+//	printf("before creating context\n");
+	/* Create the SPE Context */
+	my_context = spe_context_create(SPE_EVENTS_ENABLE|SPE_MAP_PS, NULL);
+//	printf("context created\n");
+	/* Load the embedded code into this context */
+	spe_program_load(my_context, &spe_code);
+//	printf("program loaded\n");
+	/* Run the SPE program until completion */
+	do 
+	{	
+		retval = spe_context_run(my_context, &entry_point, 0, spe5_Data, 5, NULL);
+	} 
+	while (retval > 0); /* Run until exit or error */
+	spe_context_destroy(my_context);	
+	pthread_exit(NULL);
+}
+
+void *spe_code_launch_6(void *data) 
+{
+//	printf("inside of thread function\n");
+	int retval;
+	unsigned int entry_point = SPE_DEFAULT_ENTRY; /* Required for continuing 
+      execution, SPE_DEFAULT_ENTRY is the standard starting offset. */
+	spe_context_ptr_t my_context;
+//	printf("before creating context\n");
+	/* Create the SPE Context */
+	my_context = spe_context_create(SPE_EVENTS_ENABLE|SPE_MAP_PS, NULL);
+//	printf("context created\n");
+	/* Load the embedded code into this context */
+	spe_program_load(my_context, &spe_code);
+//	printf("program loaded\n");
+	/* Run the SPE program until completion */
+	do 
+	{	
+		retval = spe_context_run(my_context, &entry_point, 0, spe6_Data, 6, NULL);
+	} 
+	while (retval > 0); /* Run until exit or error */
+	spe_context_destroy(my_context);	
+	pthread_exit(NULL);
+}
 
 int main(int argc, char **argv)
 {
@@ -173,69 +281,60 @@ int main(int argc, char **argv)
 	//speData = spe1_Data;
 	speNumber = 0;
 	/* Create Thread */
+	printf("spe1_Data value: %d\n", (int)spe1_Data );
 	retval = pthread_create(&spe1_Thread, // Thread object
 							NULL, // Thread attributes
-							spe_code_launch, // Thread function
-							spe1_Data // Thread argument
+							spe_code_launch_1, // Thread function
+							NULL // Thread argument
 							);
 
+	printf("spe2_Data value: %d\n", (int)spe2_Data );
 	
 	retval = pthread_create(&spe2_Thread, // Thread object
 							NULL, // Thread attributes
-							spe_code_launch, // Thread function
-							spe2_Data // Thread argument
+							spe_code_launch_2, // Thread function
+							NULL // Thread argument
 							);
 	
 	retval = pthread_create(&spe3_Thread, // Thread object
 							NULL, // Thread attributes
-							spe_code_launch, // Thread function
-							spe3_Data // Thread argument
+							spe_code_launch_3, // Thread function
+							NULL // Thread argument
 							);
 
+	
 	retval = pthread_create(&spe4_Thread, // Thread object
 							NULL, // Thread attributes
-							spe_code_launch, // Thread function
-							spe4_Data // Thread argument
+							spe_code_launch_4, // Thread function
+							NULL // Thread argument
 							);
 
 	retval = pthread_create(&spe5_Thread, // Thread object
 							NULL, // Thread attributes
-							spe_code_launch, // Thread function
-							spe5_Data // Thread argument
+							spe_code_launch_5, // Thread function
+							NULL // Thread argument
 							);
 
 	retval = pthread_create(&spe6_Thread, // Thread object
 							NULL, // Thread attributes
-							spe_code_launch, // Thread function
-							spe6_Data // Thread argument
+							spe_code_launch_6, // Thread function
+							NULL // Thread argument
 							);
 	
 
 
-
 	//Wait for Thread Completion
 	retval = pthread_join(spe1_Thread, NULL);
+
 	retval = pthread_join(spe2_Thread, NULL);
+
+	
 	retval = pthread_join(spe3_Thread, NULL);
+
 	retval = pthread_join(spe4_Thread, NULL);
 	retval = pthread_join(spe5_Thread, NULL);
 	retval = pthread_join(spe6_Thread, NULL);
 	
-
-	
-	printf("print out values from post spe calculations\n");
-	i = 0;
-	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
-	{
-
-		printf("Particle %d positions:   ", i );
-		printf("x= %f, y=%f, z=%f", spe6_Data[i].position[0], spe6_Data[i].position[1], spe6_Data[i].position[2]);
-		printf("\n");
-	
-	}
-
-
-
 
 
 	
@@ -281,6 +380,16 @@ int main(int argc, char **argv)
 	speNumber = 0;
 
 
+	printf("print out values from post spe calculations\n");
+	i = 0;
+	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+	{
+
+		printf("Particle %d positions:   ", i );
+		printf("x= %f, y=%f, z=%f", particle_Array[i].position[0], particle_Array[i].position[1], particle_Array[i].position[2]);
+		printf("\n");
+	
+	}
 
 	
 

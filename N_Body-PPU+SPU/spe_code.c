@@ -23,7 +23,7 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
   printf("Hello, World! (From SPU:%llx)\n",spe_id);
 
   printf("envp value: %d \n", (int)envp);
-
+  printf("pdata value: %d\n", (int)pdata );
 
 ///main loop
 
