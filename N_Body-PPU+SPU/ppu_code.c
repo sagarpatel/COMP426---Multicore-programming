@@ -261,6 +261,7 @@ int main(int argc, char **argv)
 
 
 	int speCount = spe_cpu_info_get(SPE_COUNT_PHYSICAL_SPES,-1);
+/*
 	printf("\n");
 	printf("%d", speCount);
 
@@ -268,7 +269,7 @@ int main(int argc, char **argv)
 	printf("\n");
 	printf("--------------\n");
 	printf("Starting spe1 part\n");
-
+*/
 	int retval;
 	pthread_t spe1_Thread;
 	pthread_t spe2_Thread;
@@ -281,14 +282,14 @@ int main(int argc, char **argv)
 	//speData = spe1_Data;
 	speNumber = 0;
 	/* Create Thread */
-	printf("spe1_Data value: %d\n", (int)spe1_Data );
+//	printf("spe1_Data value: %d\n", (int)spe1_Data );
 	retval = pthread_create(&spe1_Thread, // Thread object
 							NULL, // Thread attributes
 							spe_code_launch_1, // Thread function
 							NULL // Thread argument
 							);
 
-	printf("spe2_Data value: %d\n", (int)spe2_Data );
+//	printf("spe2_Data value: %d\n", (int)spe2_Data );
 	
 	retval = pthread_create(&spe2_Thread, // Thread object
 							NULL, // Thread attributes
@@ -334,7 +335,7 @@ int main(int argc, char **argv)
 	retval = pthread_join(spe4_Thread, NULL);
 	retval = pthread_join(spe5_Thread, NULL);
 	retval = pthread_join(spe6_Thread, NULL);
-	
+	/*	
 	printf("print out values from post spe1 calculations\n");
 	i = 0;
 	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
@@ -395,7 +396,7 @@ int main(int argc, char **argv)
 		printf("\n");
 	
 	}
-
+*/
 	
 
 	speNumber = 1;
@@ -439,16 +440,6 @@ int main(int argc, char **argv)
 	speNumber = 0;
 
 
-	printf("print out values from post spe calculations\n");
-	i = 0;
-	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
-	{
-
-		printf("Particle %d positions:   ", i );
-		printf("x= %f, y=%f, z=%f", particle_Array[i].position[0], particle_Array[i].position[1], particle_Array[i].position[2]);
-		printf("\n");
-	
-	}
 
 	
 
@@ -467,6 +458,17 @@ int main(int argc, char **argv)
 	}
 
 
+
+	printf("print out values from post spe calculations\n");
+	i = 0;
+	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
+	{
+
+		printf("Particle %d positions:   ", i );
+		printf("x= %f, y=%f, z=%f", particle_Array[i].position[0], particle_Array[i].position[1], particle_Array[i].position[2]);
+		printf("\n");
+	
+	}
 
 
 

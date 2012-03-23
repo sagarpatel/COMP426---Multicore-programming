@@ -20,6 +20,8 @@ volatile particle_Data particle_Array[PARTICLES_MAXCOUNT] __attribute__((aligned
 
 int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long envp)
 {
+ 
+
   printf("Hello, World! (From SPU:%llx)\n",spe_id);
 
   printf("envp value: %d \n", (int)envp);
@@ -103,9 +105,10 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
 	if (endPoint > PARTICLES_MAXCOUNT)
 		endPoint = PARTICLES_MAXCOUNT;
 
-
+/*
 	printf("startPoint: %d\n", startPoint );
 	printf("endPoint: %d\n", endPoint );
+	*/
 
 	// this first loop is to calculate the forces/accelerations
 	// NOTE ---> NO FORCES ARE APPLIED IN THIS LOOP, NO POSITIONS WILL BE CHANGED.
@@ -238,11 +241,11 @@ int main(unsigned long long spe_id, unsigned long long pdata, unsigned long long
 		// spu_madd is awesome, it all gets done in one line! emulated the += operator, kinda, but more flexible
 		particle_Array[i].position = spu_madd(particle_Array[i].velocity, tempDELATTIME, particle_Array[i].position);
 
-		
+		/*
 		printf("Particle %d positions:   ", i );
 		printf("x= %f, y=%f, z=%f", particle_Array[i].position[0], particle_Array[i].position[1], particle_Array[i].position[2]);
 		printf("\n");
-		
+		*/
 	
 
 	}
