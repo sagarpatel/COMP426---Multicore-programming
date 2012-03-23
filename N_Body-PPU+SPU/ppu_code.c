@@ -431,7 +431,7 @@ int main(int argc, char **argv)
 	}
 
 	speNumber = 6;
-	for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
+	for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<PARTICLES_MAXCOUNT; ++i)
 	{
 		particle_Array[i] = spe6_Data[i];
 	}
