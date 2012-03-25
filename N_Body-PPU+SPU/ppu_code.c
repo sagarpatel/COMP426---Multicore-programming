@@ -551,6 +551,8 @@ int main(int argc, char **argv)
 	
 	}
 
+	octantCount = resetOctantCount;
+	
 	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
 	{
      /////// INSERT QUADRANT CODE HERE , actually octant --> 8 equal sub cubes 
@@ -598,7 +600,7 @@ int main(int argc, char **argv)
 	}
 	i=0;
 
-	octantCount = resetOctantCount;
+
 
 	printf("\n");
 
