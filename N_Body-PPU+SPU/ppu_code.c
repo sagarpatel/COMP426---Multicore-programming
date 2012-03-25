@@ -408,6 +408,7 @@ int main(int argc, char **argv)
 		retval = pthread_join(spe4_Thread, NULL);
 		retval = pthread_join(spe5_Thread, NULL);
 		retval = pthread_join(spe6_Thread, NULL);
+		
 		/*	
 		printf("print out values from post spe1 calculations\n");
 		i = 0;
@@ -485,6 +486,8 @@ int main(int argc, char **argv)
 			particle_Array[i] = spe2_Data[i];
 		}
 
+		/*
+
 		speNumber = 3;
 		for(i=(speNumber-1)*PARTICLES_MAXCOUNT/SPU_COUNT; i<speNumber*PARTICLES_MAXCOUNT/SPU_COUNT; ++i)
 		{
@@ -508,6 +511,7 @@ int main(int argc, char **argv)
 		{
 			particle_Array[i] = spe6_Data[i];
 		}
+		*/
 
 		// reset spe counter
 		speNumber = 0;
@@ -593,6 +597,8 @@ int main(int argc, char **argv)
 		
 	}
 	i=0;
+
+	octantCount = resetOctantCount;
 
 	printf("\n");
 

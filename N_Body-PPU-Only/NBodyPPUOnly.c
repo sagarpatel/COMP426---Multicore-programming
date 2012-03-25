@@ -38,13 +38,13 @@ Pretty much entirely SIMD based and NOT A SINGLE BRANCH IN THE CODE
 #include <sys/time.h>
 
 
-#define PARTICLES_MAXCOUNT 128 //must be power of 2 in orderfor array data align to work later on
+#define PARTICLES_MAXCOUNT 512 //must be power of 2 in orderfor array data align to work later on
 #define PARTICLES_DEFAULTMASS 1000.0 // 1.0 is 1 kg
 #define GRAVITATIONALCONSTANT 0.00000000006673 // real value is 6.673 * 10^-11
 #define DELTA_TIME 60.0
 #define GRID_SIZE 10 // grid is a +- GRID_SIZE/2 cube
 #define EPS 1.0 // EPS^2 constant to avoid singularities
-#define ITERATION_COUNT 1000
+#define ITERATION_COUNT 200
 
 typedef struct 
 {
@@ -66,6 +66,9 @@ int main(int argc, char **argv)
 // setup, assign particles initla positions and masses
 // this is done in scalar fashion, NOT SIMD
 // insignificant to performance since it's only done once
+
+	struct timeval start;
+	gettimeofday(&start,NULL);
 
 	//seed random generator
 	srand( time(NULL) );
@@ -339,7 +342,7 @@ int main(int argc, char **argv)
 		*/
 	}
 
-
+/*
 	printf("\n");
 	for(i = 0; i<PARTICLES_MAXCOUNT; ++i)
 	{
@@ -354,12 +357,20 @@ int main(int argc, char **argv)
 				octantCount[4],	octantCount[5], octantCount[6], octantCount[7]);
 		printf("\n");
 	}
+*/
+	printf("Particle disttribution across the octants: \n");
+		printf("O0: %d    O1: %d    O2: %d    O3: %d    O4: %d    O5: %d    O6: %d    O7: %d\n",
+				octantCount[0], octantCount[1], octantCount[2], octantCount[3], 
+				octantCount[4],	octantCount[5], octantCount[6], octantCount[7]);
+		printf("\n");
 
 
-	time_t endTime = time(NULL);
-	int deltaTime = endTime - startTime;
+		struct timeval end;
+	gettimeofday(&end,NULL);
+	float deltaTime = ((end.tv_sec - start.tv_sec)*1000.0f + (end.tv_usec -start.tv_usec)/1000.0f);
 
-	printf("Execution time:    %d\n",deltaTime);
+
+	printf("Execution time:    %f\n",deltaTime);
 	
 
 
